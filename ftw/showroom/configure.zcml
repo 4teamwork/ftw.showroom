@@ -1,0 +1,13 @@
+<configure
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="ftw.showroom">
+
+    <genericsetup:registerProfile
+        name="default"
+        title="ftw.showroom"
+        directory="profiles/default"
+        description="Installs the ftw.showroom package"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        />
+
+</configure>
