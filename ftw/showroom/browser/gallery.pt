@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+     xmlns:tal="http://xml.zope.org/namespaces/tal"
+     xmlns:metal="http://xml.zope.org/namespaces/metal"
+     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+     lang="en"
+     metal:use-macro="context/main_template/macros/master"
+     i18n:domain="ftw.file">
+
+<body>
+
+<metal:content-core fill-slot="content-core">
+   <metal:content-core define-macro="content-core">
+  <div>
+    <ul>
+      <li>
+        <a class="item" data-showroom-target="http://www.google.com" data-showroom-title="PETER">
+          Vestibulum ullamcorper mauris at ligula
+        </a>
+      </li>
+      <li>
+        <a class="item" data-showroom-target="http://de.yahoo.com">
+          Vestibulum ullamcorper mauris at ligula
+        </a>
+      </li>
+      <li>
+        <a class="item" data-showroom-target="http://www.google.com">
+          Vestibulum ullamcorper mauris at ligula
+        </a>
+      </li>
+      <li>
+        <a class="item" data-showroom-target="http://www.google.com">
+          Vestibulum ullamcorper mauris at ligula
+        </a>
+      </li>
+      <li>
+        <a class="item" data-showroom-target="http://www.google.com">
+          Vestibulum ullamcorper mauris at ligula
+        </a>
+      </li>
+      <li>
+        <a class="item" data-showroom-target="http://www.google.com">
+          Vestibulum ullamcorper mauris at ligula
+        </a>
+      </li>
+    </ul>
+  </div>
+  <script>
+    var peter = showroom(document.querySelectorAll(".item"), {
+      fetch: function() { return "<p>Das ist Inhalt</p>"; }
+    });
+  </script>
+</metal:content-core>
+</metal:content-core>
+
+</body>
+</html>

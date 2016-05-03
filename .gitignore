@@ -12,3 +12,9 @@
 /parts/
 /src/
 /var/
+.grunt
+.lock-wscript
+node_modules
+.npm
+.node_repl_history
+

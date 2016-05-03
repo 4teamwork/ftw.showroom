@@ -1,6 +1,9 @@
 <configure
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="ftw.showroom">
+
+    <include package=".browser" />
 
     <genericsetup:registerProfile
         name="default"
@@ -9,5 +12,15 @@
         description="Installs the ftw.showroom package"
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
+
+    <browser:resourceDirectory
+      name="ftw.showroom"
+      directory="resources"
+      />
+
+    <browser:resourceDirectory
+      name="ftw.showroom-client"
+      directory="browser/client/dist"
+      />
 
 </configure>
