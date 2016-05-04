@@ -1,0 +1,36 @@
+{
+  "name": "showroom",
+  "version": "1.0.0",
+  "repository": "https://github.com/bierik/javascript-library",
+  "license": "MIT",
+  "description": "Boilerplate package for creating javascript babel es2015 library with test suit.",
+  "scripts": {
+    "test": "karma start"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-browserify": "*",
+    "grunt-contrib-watch": "*",
+    "karma": "^0.13.0",
+    "karma-browserify": "^4.2.0",
+    "jasmine-core": "*",
+    "karma-jasmine": "*",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "chai": "*",
+    "karma-chai": "*",
+    "karma-fixture": "*",
+    "babelify": "*",
+    "babel-preset-es2015": "*",
+    "karma-babel-preprocessor": "*",
+    "karma-html2js-preprocessor": "*",
+    "babelify-es6-polyfill": "*",
+    "jquery": "2.1.0",
+    "handlebars": "*",
+    "jasmine-ajax": "*",
+    "browserify-shim": "*"
+  },
+  "browserify-shim": {
+    "jquery": { "exports": "global:jQuery" },
+    "handlebars": { "exports": "global:Handlebars" }
+  }
+}

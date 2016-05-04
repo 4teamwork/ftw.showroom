@@ -1,0 +1,63 @@
+#content ul {
+  list-style-type: none;
+}
+
+#content ul li a.item {
+  display: block;
+  width: 100px;
+  height: 100px;
+  background-color: rgba(0, 0, 0, .2);
+}
+
+.ftw-showroom {
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.ftw-showroom .ftw-showroom-content {
+  overflow-y: auto;
+  width: 100%;
+  height: calc(100% - 68px);
+  background-color: rgba(0, 0, 0, .6);
+}
+.ftw-showroom .ftw-showroom-header {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 2em;
+  padding: 20px 25px;
+}
+.ftw-showroom .ftw-showroom-header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.ftw-showroom .ftw-showroom-left {
+  float: left;
+}
+.ftw-showroom .ftw-showroom-right {
+  float: right;
+}
+.ftw-showroom .ftw-showroom-title {
+  margin-left: 20px;
+}
+.ftw-showroom .ftw-showroom-button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1em;
+  width: 20px;
+  height: 20px;
+  display: block;
+  cursor: pointer;
+}
+
+#ftw-showroom-close {
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%0D%0A%3C%21--%20Generator%3A%20Adobe%20Illustrator%2019.0.0%2C%20SVG%20Export%20Plug-In%20.%20SVG%20Version%3A%206.00%20Build%200%29%20%20--%3E%0D%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Capa_1%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%20x%3D%220px%22%20y%3D%220px%22%0D%0A%09%20viewBox%3D%2229%20-28%20357%20357%22%20style%3D%22enable-background%3Anew%2029%20-28%20357%20357%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0D%0A%3Cstyle%20type%3D%22text/css%22%3E%0D%0A%09.st0%7Bfill%3A%23FFFFFF%3B%7D%0D%0A%3C/style%3E%0D%0A%3Cg%3E%0D%0A%09%3Cg%20id%3D%22close%22%3E%0D%0A%09%09%3Cpolygon%20class%3D%22st0%22%20points%3D%22386%2C7.7%20350.3%2C-28%20207.5%2C114.8%2064.7%2C-28%2029%2C7.7%20171.8%2C150.5%2029%2C293.3%2064.7%2C329%20207.5%2C186.2%20%0D%0A%09%09%09350.3%2C329%20386%2C293.3%20243.2%2C150.5%20%09%09%22/%3E%0D%0A%09%3C/g%3E%0D%0A%3C/g%3E%0D%0A%3C/svg%3E%0D%0A');
+  background-repeat: no-repeat;
+  width: 20px;
+  height: 20px;
+}
+
