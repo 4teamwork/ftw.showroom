@@ -6,7 +6,7 @@
                 inline="False"/>
 
     <javascript cacheable="True" compression="safe" cookable="True" enabled="on"
-                expression="" id="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"
+                expression="" id="++resource++ftw.showroom/handlebars.js"
                 insert-before="++resource++ftw.showroom-client/showroom.js"
                 inline="False"/>
 
