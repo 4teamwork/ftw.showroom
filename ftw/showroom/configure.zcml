@@ -3,8 +3,6 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="ftw.showroom">
 
-    <include package=".browser" />
-
     <genericsetup:registerProfile
         name="default"
         title="ftw.showroom"
