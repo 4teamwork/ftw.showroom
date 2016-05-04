@@ -51,6 +51,7 @@
   width: 20px;
   height: 20px;
   display: block;
+  cursor: pointer;
 }
 
 #ftw-showroom-close {
