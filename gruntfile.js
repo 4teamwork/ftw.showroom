@@ -14,7 +14,7 @@ module.exports = function(grunt) {
       },
       dist: {
         options: {
-          paths: ["./src", "./test/spec"],
+          paths: ["./ftw/showroom/js/src", "./ftw/showroom/js/test/spec"],
           transform: [
             ["babelify", {
               presets: "es2015"
@@ -23,14 +23,14 @@ module.exports = function(grunt) {
           ]
         },
         files: {
-          "./dist/<%= pkg.name %>.js": ["./src/<%= pkg.name %>.js"]
+          "./ftw/showroom/resources/<%= pkg.name %>.js": ["./ftw/showroom/js/src/<%= pkg.name %>.js"]
         }
       }
     },
 
     watch: {
       scripts: {
-        files: ["src/**/*.js"],
+        files: ["./ftw/showroom/js/src/**/*.js"],
         tasks: ["browserify"]
       }
     }

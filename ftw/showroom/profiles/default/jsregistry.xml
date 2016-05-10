@@ -2,12 +2,13 @@
 <object name="portal_javascripts" meta_type="JavaScripts Registry" autogroup="False">
 
     <javascript cacheable="True" compression="safe" cookable="True" enabled="on"
-                expression="" id="++resource++ftw.showroom-client/showroom.js"
+                expression="" id="++resource++ftw.showroom/handlebars.js"
+                insert-after="++resource++plone.app.jquery.js"
                 inline="False"/>
 
     <javascript cacheable="True" compression="safe" cookable="True" enabled="on"
-                expression="" id="++resource++ftw.showroom/handlebars.js"
-                insert-before="++resource++ftw.showroom-client/showroom.js"
+                expression="" id="++resource++ftw.showroom/showroom.js"
+                insert-after="++resource++ftw.showroom/handlebars.js"
                 inline="False"/>
 
 </object>

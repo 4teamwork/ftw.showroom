@@ -6,20 +6,20 @@ module.exports = function(karma) {
     frameworks: [ "jasmine", "browserify", "chai", "fixture" ],
 
     files: [
-      { pattern: "./test/**/*.js" },
-      { pattern: "./test/fixtures/**/*.html" }
+      { pattern: "./ftw/showroom/js/test/**/*.js" },
+      { pattern: "./ftw/showroom/js/test/fixtures/**/*.html" }
     ],
 
     reporters: [ "dots" ],
 
     preprocessors: {
-      "./test/**/*.js": "browserify",
-      "./test/fixtures/**/*.html": "html2js"
+      "./ftw/showroom/js/test/**/*.js": "browserify",
+      "./ftw/showroom/js/test/fixtures/**/*.html": "html2js"
     },
 
     browserify: {
       debug: true,
-      paths: ["./src", "./test/spec"],
+      paths: ["./ftw/showroom/js/src", "./ftw/showroom/js/test/spec"],
       transform: [
         ["babelify", {
             presets: ["es2015"],
@@ -33,4 +33,5 @@ module.exports = function(karma) {
     singleRun: false,
     autoWatch: true
   });
+
 };
