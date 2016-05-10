@@ -199,6 +199,7 @@ module.exports = function Showroom() {
   };
 
   function select(event) {
+    event.preventDefault();
     var item = register.items.filter(function (item) {
       return item.id === event.currentTarget.getAttribute("data-showroom-id");
     })[0];

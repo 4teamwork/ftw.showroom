@@ -73,6 +73,7 @@ module.exports = function Showroom(items = [], options) {
   };
 
   function select(event) {
+    event.preventDefault();
     let item = register.items.filter((item) => {
       return item.id === event.currentTarget.getAttribute("data-showroom-id");
     })[0];
