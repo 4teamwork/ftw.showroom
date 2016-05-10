@@ -12,7 +12,7 @@ describe("Showroom", () => {
   var defaultItems;
 
   beforeAll(() => {
-    fixture.setBase('test/fixtures');
+    fixture.setBase('ftw/showroom/js/test/fixtures');
   });
 
   beforeEach(() => {

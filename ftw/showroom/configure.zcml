@@ -16,9 +16,4 @@
       directory="resources"
       />
 
-    <browser:resourceDirectory
-      name="ftw.showroom-client"
-      directory="browser/client/dist"
-      />
-
 </configure>
