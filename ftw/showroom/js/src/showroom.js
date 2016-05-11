@@ -1,6 +1,8 @@
 import { noop, uuid, isHTMLElement } from "./utils"
 import Item from "./item";
 import Register from "./register";
+import * as event from "./event";
+
 let Handlebars = require("handlebars");
 let $ = require("jquery");
 
@@ -25,17 +27,17 @@ module.exports = function Showroom(items = [], options) {
     </div>
   `);
 
-  let selectCallback = noop;
+  let element = $();
 
-  items = Array.from(items);
+  items = Array.prototype.slice.call(items);
 
   let htmlElementCount = items.filter(isHTMLElement).length;
   if(htmlElementCount && htmlElementCount < items.length) {
     throw new Error("The object set is not consistend");
   }
 
-  items = items.map((item) => { return Item(item); });
-  items.map((item) => { $(item.element).on("click", select); });
+  items = items.map(item => Item(item));
+  items.map(item => $(item.element).on("click", select));
 
   options = $.extend({
     cssClass: "ftw-showroom",
@@ -47,38 +49,45 @@ module.exports = function Showroom(items = [], options) {
     target: "body"
   }, options);
 
-  let element = $();
 
   let register = Register(items, { tail: options.tail, head: options.head });
-
-  function onSelect(_selectCallback) { selectCallback = _selectCallback; }
-
-  function fetch(item) { return $.get(item.target); };
-
   let target = $(options.target);
+
+  let data = { cssClass: options.cssClass };
+  Object.defineProperty(data, "current", { get: () => { return register.pointer + 1; }});
+  Object.defineProperty(data, "total", { get: () => { return register.size; }});
 
   target.on("click", "#ftw-showroom-close", close);
 
-  let data = { cssClass: options.cssClass };
+  target.on("keydown", (e) => {
+    event.isEscape(e, close);
+    event.isArrowRight(e, next);
+    event.isArrowLeft(e, prev);
+  });
 
-  Object.defineProperty(data, "current", { get: function() { return register.pointer + 1; }});
-  Object.defineProperty(data, "total", { get: function() { return register.size; }});
+  function fetch(item) { return $.get(item.target); };
+
+  function bindEvents() {
+    element.on("click", "#ftw-showroom-next", next);
+    element.on("click", "#ftw-showroom-prev", prev);
+  };
 
   function render(content) {
     return $.when(content).done((content) => {
+      element.remove();
       element = $(template({ showroom: data, content: content, item: register.current }));
       element.show();
       target.append(element).addClass("ftw-showroom-open");
+      bindEvents();
     });
   };
 
   function select(event) {
     event.preventDefault();
-    let item = register.items.filter((item) => {
-      return item.id === event.currentTarget.getAttribute("data-showroom-id");
-    })[0];
+    let item = register.items.filter(
+      item => item.id === event.currentTarget.getAttribute("data-showroom-id")
+    )[0];
     open(item);
-    selectCallback(item);
   }
 
   function close() {
@@ -87,6 +96,10 @@ module.exports = function Showroom(items = [], options) {
   }
 
   function open(item) {
+    item = item || register.items[0];
+    if(!item) {
+      return false;
+    }
     register.set(item || register.items[0]);
     return render(options.fetch(item));
   }
@@ -102,7 +115,6 @@ module.exports = function Showroom(items = [], options) {
   }
 
   var reveal = {
-    onSelect: onSelect,
     data: data,
     open: open,
     close: close,
@@ -110,7 +122,8 @@ module.exports = function Showroom(items = [], options) {
     prev: prev
   };
 
-  Object.defineProperty(reveal, "items", { get: function() { return register.items; }});
+  Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
+  Object.defineProperty(reveal, "element", { get: () => { return element; }});
 
   return Object.freeze(reveal);
 

@@ -48,10 +48,10 @@ export default function Register(items = [], options) {
     checkPointer();
   }
 
-  Object.defineProperty(reveal, "current", { get: function() { return items[pointer]; }});
-  Object.defineProperty(reveal, "size", { get: function() { return items.length; }});
-  Object.defineProperty(reveal, "items", { get: function() { return items; }});
-  Object.defineProperty(reveal, "pointer", { get: function() { return pointer; }});
+  Object.defineProperty(reveal, "current", { get: () => { return items[pointer]; }});
+  Object.defineProperty(reveal, "size", { get: () => { return items.length; }});
+  Object.defineProperty(reveal, "items", { get: () => { return items; }});
+  Object.defineProperty(reveal, "pointer", { get: () => { return pointer; }});
   reveal.next = next;
   reveal.prev = prev;
   reveal.append = append;
