@@ -17,33 +17,33 @@
   right: 0;
   bottom: 0;
 }
-.ftw-showroom .ftw-showroom-content {
+.ftw-showroom-content {
   overflow-y: auto;
   width: 100%;
   height: calc(100% - 68px);
   background-color: rgba(0, 0, 0, .6);
 }
-.ftw-showroom .ftw-showroom-header {
+.ftw-showroom-header {
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   font-size: 2em;
   padding: 20px 25px;
 }
-.ftw-showroom .ftw-showroom-header:after {
+.ftw-showroom-header:after {
   content: "";
   display: table;
   clear: both;
 }
-.ftw-showroom .ftw-showroom-left {
+.ftw-showroom-left {
   float: left;
 }
-.ftw-showroom .ftw-showroom-right {
+.ftw-showroom-right {
   float: right;
 }
-.ftw-showroom .ftw-showroom-title {
+.ftw-showroom-title {
   margin-left: 20px;
 }
-.ftw-showroom .ftw-showroom-button {
+.ftw-showroom-button {
   background-color: transparent;
   border: none;
   color: #fff;
