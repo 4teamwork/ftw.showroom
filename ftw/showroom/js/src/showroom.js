@@ -34,8 +34,8 @@ module.exports = function Showroom(items = [], options) {
     throw new Error("The object set is not consistend");
   }
 
-  items = items.map((item) => { return Item(item); });
-  items.map((item) => { $(item.element).on("click", select); });
+  items = items.map(item => Item(item));
+  items.map(item => $(item.element).on("click", select));
 
   options = $.extend({
     cssClass: "ftw-showroom",
@@ -61,8 +61,8 @@ module.exports = function Showroom(items = [], options) {
 
   let data = { cssClass: options.cssClass };
 
-  Object.defineProperty(data, "current", { get: function() { return register.pointer + 1; }});
-  Object.defineProperty(data, "total", { get: function() { return register.size; }});
+  Object.defineProperty(data, "current", { get: () => { return register.pointer + 1; }});
+  Object.defineProperty(data, "total", { get: () => { return register.size; }});
 
   function render(content) {
     return $.when(content).done((content) => {
@@ -74,9 +74,9 @@ module.exports = function Showroom(items = [], options) {
 
   function select(event) {
     event.preventDefault();
-    let item = register.items.filter((item) => {
-      return item.id === event.currentTarget.getAttribute("data-showroom-id");
-    })[0];
+    let item = register.items.filter(
+      item => item.id === event.currentTarget.getAttribute("data-showroom-id")
+    )[0];
     open(item);
     selectCallback(item);
   }
@@ -110,7 +110,7 @@ module.exports = function Showroom(items = [], options) {
     prev: prev
   };
 
-  Object.defineProperty(reveal, "items", { get: function() { return register.items; }});
+  Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
 
   return Object.freeze(reveal);
 

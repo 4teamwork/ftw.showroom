@@ -1,7 +1,9 @@
 import Showroom from "showroom";
 require('babelify-es6-polyfill');
 require('jasmine-ajax');
-var $ = require("jquery");
+let $ = require("jquery");
+
+let defaultItems;
 
 function isUUID(uuid) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
@@ -9,7 +11,6 @@ function isUUID(uuid) {
 
 describe("Showroom", () => {
 
-  var defaultItems;
 
   beforeAll(() => {
     fixture.setBase('ftw/showroom/js/test/fixtures');
@@ -20,9 +21,7 @@ describe("Showroom", () => {
     defaultItems = fixture.el.querySelectorAll(".item");
   });
 
-  afterEach(function(){
-    fixture.cleanup()
-  });
+  afterEach(() => { fixture.cleanup() });
 
   describe("Initialisation", () => {
 
@@ -34,9 +33,9 @@ describe("Showroom", () => {
     it("should accept list of DOM elements for initialisation.", () => {
       var showroom = Showroom(defaultItems);
 
-      assert.deepEqual(Array.from(showroom.items).map((item) => {
-        return item.element.className;
-      }), ["item", "item", "item", "item", "item"]);
+      assert.deepEqual(Array.from(showroom.items).map(
+        item => item.element.className
+      ), ["item", "item", "item", "item", "item"]);
     });
 
     it("should throw error when mixin DOM elements and with plain objects.", () => {
@@ -57,8 +56,9 @@ describe("Showroom", () => {
       var showroom = Showroom(defaultItems);
 
       assert.deepEqual(
-        Array.from(showroom.items).map((item) => { return isUUID(item.id); }),
-        [true, true, true, true, true]
+        Array.from(showroom.items).map(
+          item => isUUID(item.id)
+        ), [true, true, true, true, true]
       );
     });
 
@@ -68,11 +68,11 @@ describe("Showroom", () => {
       showroom.onSelect((item) => {
         assert.oneOf(
           item.id,
-          showroom.items.map((item) => { return item.id })
+          showroom.items.map(item => item.id)
         );
       });
 
-      showroom.items.map((item) => { $(item.element).click() });
+      showroom.items.map(item => $(item.element).click());
     });
 
     it("sould have default data object.", () => {
