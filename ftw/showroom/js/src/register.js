@@ -60,10 +60,16 @@ export default function Register(items = [], options) {
     checkPointer();
   }
 
+  function hasNext() { return pointer < items.length - 1; }
+
+  function hasPrev() { return pointer > 0; }
+
   Object.defineProperty(reveal, "current", { get: () => { return items[pointer]; }});
   Object.defineProperty(reveal, "size", { get: () => { return items.length; }});
   Object.defineProperty(reveal, "items", { get: () => { return items; }});
   Object.defineProperty(reveal, "pointer", { get: () => { return pointer; }});
+  reveal.hasNext = hasNext;
+  reveal.hasPrev = hasPrev;
   reveal.next = next;
   reveal.prev = prev;
   reveal.prepend = prepend

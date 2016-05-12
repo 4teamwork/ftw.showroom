@@ -263,5 +263,43 @@ describe("Register", () => {
 
   });
 
+  describe("hasNext", () => {
+
+    it("should be false on an empty register", () => {
+      assert.isFalse(Regsiter().hasNext(), "An empty register should not have next items.");
+    });
+
+    it("should be false an a register with one item", () => {
+      assert.isFalse(Regsiter([1]).hasNext(), "A register with one item should not have next items.");
+    });
+
+    it("should be true an a register with more than one item", () => {
+      assert.isTrue(Regsiter([1, 2]).hasNext(), "A register with more than one item should have next items.");
+    });
+
+  });
+
+  describe("hasPrev", () => {
+
+    it("should be false on an empty register", () => {
+      assert.isFalse(Regsiter().hasPrev(), "An empty register should not have previous items.");
+    });
+
+    it("should be false an a register with one item", () => {
+      assert.isFalse(Regsiter([1]).hasPrev(), "A register with one item should not have previous items.");
+    });
+
+    it("should be false an a register with more than one item initially", () => {
+      assert.isFalse(Regsiter([1, 2]).hasPrev(), "A register with more than one item should have previous items initially.");
+    });
+
+    it("should be true an a register with more than one item with pointer not set to the first item", () => {
+      let register = Regsiter([1, 2]);
+      register.next();
+      assert.isTrue(register.hasPrev(), "A register with more than one item should have previous items when the pointer is not set to the first item.");
+    });
+
+  });
+
 });
 

@@ -117,19 +117,26 @@ var _utils = require("./utils");
 
 function Item(element) {
 
+  var reveal = {};
   var showroomId = (0, _utils.generateUUID)();
-
-  var target = element.getAttribute("data-showroom-target") || "";
-  var title = element.getAttribute("data-showroom-title") || "";
+  var rendered = false;
 
   element.setAttribute("data-showroom-id", showroomId);
 
-  return Object.freeze({
-    element: element,
-    title: title,
-    id: showroomId,
-    target: target
+  reveal.element = element;
+  reveal.target = element.getAttribute("data-showroom-target") || "";
+  reveal.title = element.getAttribute("data-showroom-title") || "";
+  reveal.id = showroomId;
+  Object.defineProperty(reveal, "rendered", {
+    get: function get() {
+      return rendered;
+    },
+    set: function set(val) {
+      rendered = val;
+    }
   });
+
+  return reveal;
 }
 
 },{"./utils":5}],3:[function(require,module,exports){
@@ -159,26 +166,25 @@ function Register() {
 
   var reveal = {};
 
-  var notifier = {
-    state: "pending",
-    notify: function notify(value) {
-      if (value !== this.value) {
-        this.value = value;
-        this.state = "notified";
+  var oberserver = {
+    value: pointer,
+    changed: false,
+    update: function update(val) {
+      if (val === this.value) {
+        this.changed = false;
       } else {
-        this.reset();
+        this.changed = true;
       }
+      this.value = val;
     },
-    reset: function reset() {
-      this.state = "pending";
-    },
-    hasNotified: function hasNotified() {
-      return this.state === "notified";
+    hasChanged: function hasChanged() {
+      return this.changed;
     }
   };
 
   function append() {
     var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
     items = $.merge(items, pushItems);
   }
 
@@ -190,15 +196,12 @@ function Register() {
   }
 
   function checkPointer() {
-    if (pointer === 0) {
-      notifier.notify("head");
-      if (notifier.hasNotified()) {
+    oberserver.update(pointer);
+    if (oberserver.hasChanged()) {
+      if (pointer === 0) {
         options.head(reveal.current);
       }
-    }
-    if (pointer === reveal.size - 1) {
-      notifier.notify("tail");
-      if (notifier.hasNotified()) {
+      if (pointer === reveal.size - 1) {
         options.tail(reveal.current);
       }
     }
@@ -228,6 +231,14 @@ function Register() {
     checkPointer();
   }
 
+  function hasNext() {
+    return pointer < items.length - 1;
+  }
+
+  function hasPrev() {
+    return pointer > 0;
+  }
+
   Object.defineProperty(reveal, "current", { get: function get() {
       return items[pointer];
     } });
@@ -240,6 +251,11 @@ function Register() {
   Object.defineProperty(reveal, "pointer", { get: function get() {
       return pointer;
     } });
+  Object.defineProperty(reveal, "changed", { get: function get() {
+      return oberserver.hasChanged();
+    } });
+  reveal.hasNext = hasNext;
+  reveal.hasPrev = hasPrev;
   reveal.next = next;
   reveal.prev = prev;
   reveal.prepend = prepend;
@@ -337,9 +353,15 @@ module.exports = function Showroom() {
   };
 
   function render(content) {
-    return $.when(content).done(function (content) {
+    return $.when(content).pipe(function (content) {
+      return $(template({ showroom: data, content: content, item: register.current }));
+    });
+  }
+
+  function showItem(item) {
+    return $.when(options.fetch(item)).pipe(options.render).pipe(function (newElement) {
       element.remove();
-      element = $(template({ showroom: data, content: content, item: register.current }));
+      element = newElement || $();
       element.show();
       target.append(element).addClass("ftw-showroom-open");
       bindEvents();
@@ -365,7 +387,7 @@ module.exports = function Showroom() {
       return false;
     }
     register.set(item || register.items[0]);
-    return render(options.fetch(item));
+    return showItem(item);
   }
 
   function next() {

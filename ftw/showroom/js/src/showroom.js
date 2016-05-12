@@ -1,5 +1,6 @@
 import { noop, uuid, isHTMLElement } from "./utils"
 import Item from "./item";
+import Observer from "./observer";
 import Register from "./register";
 import * as event from "./event";
 
@@ -51,18 +52,11 @@ module.exports = function Showroom(items = [], options) {
 
   let register = Register(items, { tail: options.tail, head: options.head });
   let target = $(options.target);
+  let observer = Observer();
 
   let data = { cssClass: options.cssClass };
   Object.defineProperty(data, "current", { get: () => { return register.pointer + 1; }});
   Object.defineProperty(data, "total", { get: () => { return options.total; }});
-
-  target.on("click", "#ftw-showroom-close", close);
-
-  target.on("keydown", (e) => {
-    event.isEscape(e, close);
-    event.isArrowRight(e, next);
-    event.isArrowLeft(e, prev);
-  });
 
   function fetch(item) { return $.get(item.target); };
 
@@ -72,9 +66,15 @@ module.exports = function Showroom(items = [], options) {
   };
 
   function render(content) {
-    return $.when(content).done((content) => {
+    return $.when(content).pipe((content) => {
+      return $(template({ showroom: data, content: content, item: register.current }));
+    });
+  }
+
+  function showItem(item) {
+    return $.when(options.fetch(item)).pipe(options.render).pipe((newElement) => {
       element.remove();
-      element = $(template({ showroom: data, content: content, item: register.current }));
+      element = newElement || $();
       element.show();
       target.append(element).addClass("ftw-showroom-open");
       bindEvents();
@@ -100,7 +100,11 @@ module.exports = function Showroom(items = [], options) {
       return false;
     }
     register.set(item || register.items[0]);
-    return render(options.fetch(item));
+    observer.update(item);
+    if(observer.hasChanged()) {
+      return showItem(item);
+    }
+    return false;
   }
 
   function next() {
@@ -112,6 +116,14 @@ module.exports = function Showroom(items = [], options) {
     register.prev();
     open(register.current);
   }
+
+  target.on("click", "#ftw-showroom-close", close);
+
+  target.on("keydown", (e) => {
+    event.isEscape(e, close);
+    event.isArrowRight(e, next);
+    event.isArrowLeft(e, prev);
+  });
 
   var reveal = {
     data: data,
