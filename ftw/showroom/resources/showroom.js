@@ -159,17 +159,48 @@ function Register() {
 
   var reveal = {};
 
+  var notifier = {
+    state: "pending",
+    notify: function notify(value) {
+      if (value !== this.value) {
+        this.value = value;
+        this.state = "notified";
+      } else {
+        this.reset();
+      }
+    },
+    reset: function reset() {
+      this.state = "pending";
+    },
+    hasNotified: function hasNotified() {
+      return this.state === "notified";
+    }
+  };
+
   function append() {
     var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
     items = $.merge(items, pushItems);
   }
 
+  function prepend() {
+    var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    pointer += pushItems.length;
+    items = $.merge(pushItems, items);
+  }
+
   function checkPointer() {
     if (pointer === 0) {
-      options.head(reveal.current);
+      notifier.notify("head");
+      if (notifier.hasNotified()) {
+        options.head(reveal.current);
+      }
     }
     if (pointer === reveal.size - 1) {
-      options.tail(reveal.current);
+      notifier.notify("tail");
+      if (notifier.hasNotified()) {
+        options.tail(reveal.current);
+      }
     }
   }
 
@@ -211,10 +242,9 @@ function Register() {
     } });
   reveal.next = next;
   reveal.prev = prev;
+  reveal.prepend = prepend;
   reveal.append = append;
   reveal.set = set;
-
-  checkPointer();
 
   return Object.freeze(reveal);
 }
