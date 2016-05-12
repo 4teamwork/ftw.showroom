@@ -23,7 +23,8 @@ function loadDefaultShowroom() {
         <button id='ftw-showroom-prev'></button>
       `;
     },
-    target: "#outlet"
+    target: "#outlet",
+    total: 10
   });
 }
 
@@ -82,13 +83,44 @@ describe("Showroom", () => {
       );
     });
 
-    it("sould have default data object.", () => {
+  });
+
+  describe("data", () => {
+
+    it("sould have default valuea.", () => {
       let showroom = Showroom(defaultItems);
 
       assert.equal(showroom.data.cssClass, "ftw-showroom");
       assert.equal(showroom.data.current, 1);
-      assert.equal(showroom.data.total, 5);
+      assert.equal(showroom.data.total, undefined);
     });
+
+  });
+
+  describe("total", () => {
+
+    it("sould be configurable", () => {
+      let showroom = loadDefaultShowroom();
+      showroom.open();
+
+      assert.equal(showroom.data.total, 10);
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
+    });
+
+    it("sould render no total if not defined", () => {
+      fixture.load("default_outlet.html");
+      let showroom = Showroom(defaultItems, {
+        target: "#outlet",
+        fetch: () => {
+          return "<div id='content'>content</div>";
+        }
+      });
+      showroom.open();
+
+      assert.equal(showroom.data.total, undefined);
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "");
+    });
+
   });
 
   describe("open", () => {
@@ -99,7 +131,7 @@ describe("Showroom", () => {
       showroom.open(showroom.items[1]);
 
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "2");
-      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "5");
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom").className, "ftw-showroom");
       assert.equal(fixture.el.querySelector("#outlet #content").innerHTML, "content");
     });
@@ -118,7 +150,7 @@ describe("Showroom", () => {
       showroom.open();
 
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "1");
-      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "5");
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom").className, "ftw-showroom");
       assert.equal(fixture.el.querySelector("#outlet #content").innerHTML, "content");
     });

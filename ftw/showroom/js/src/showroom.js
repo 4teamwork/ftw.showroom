@@ -8,12 +8,22 @@ let $ = require("jquery");
 
 module.exports = function Showroom(items = [], options) {
 
+  options = $.extend({
+    cssClass: "ftw-showroom",
+    render: render,
+    tail: noop,
+    head: noop,
+    fetch: fetch,
+    template: template,
+    target: "body"
+  }, options);
+
   let template = Handlebars.compile(`
     <div class="{{showroom.cssClass}}">
       <header class="ftw-showroom-header">
         <div class="ftw-showroom-left">
           <span class="ftw-showroom-current">{{showroom.current}}</span>
-          <span>/</span>
+          {{#if showroom.total}}<span>/</span>{{/if}}
           <span class="ftw-showroom-total">{{showroom.total}}</span>
         </div>
         <span class="ftw-showroom-title">{{item.title}}</span>
@@ -39,23 +49,12 @@ module.exports = function Showroom(items = [], options) {
   items = items.map(item => Item(item));
   items.map(item => $(item.element).on("click", select));
 
-  options = $.extend({
-    cssClass: "ftw-showroom",
-    render: render,
-    tail: noop,
-    head: noop,
-    fetch: fetch,
-    template: template,
-    target: "body"
-  }, options);
-
-
   let register = Register(items, { tail: options.tail, head: options.head });
   let target = $(options.target);
 
   let data = { cssClass: options.cssClass };
   Object.defineProperty(data, "current", { get: () => { return register.pointer + 1; }});
-  Object.defineProperty(data, "total", { get: () => { return register.size; }});
+  Object.defineProperty(data, "total", { get: () => { return options.total; }});
 
   target.on("click", "#ftw-showroom-close", close);
 

@@ -250,7 +250,17 @@ module.exports = function Showroom() {
   var options = arguments[1];
 
 
-  var template = Handlebars.compile("\n    <div class=\"{{showroom.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          <span>/</span>\n          <span class=\"ftw-showroom-total\">{{showroom.total}}</span>\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
+  options = $.extend({
+    cssClass: "ftw-showroom",
+    render: render,
+    tail: _utils.noop,
+    head: _utils.noop,
+    fetch: fetch,
+    template: template,
+    target: "body"
+  }, options);
+
+  var template = Handlebars.compile("\n    <div class=\"{{showroom.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{#if showroom.total}}<span>/</span>{{/if}}\n          <span class=\"ftw-showroom-total\">{{showroom.total}}</span>\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
 
   var element = $();
 
@@ -268,16 +278,6 @@ module.exports = function Showroom() {
     return $(item.element).on("click", select);
   });
 
-  options = $.extend({
-    cssClass: "ftw-showroom",
-    render: render,
-    tail: _utils.noop,
-    head: _utils.noop,
-    fetch: fetch,
-    template: template,
-    target: "body"
-  }, options);
-
   var register = (0, _register2.default)(items, { tail: options.tail, head: options.head });
   var target = $(options.target);
 
@@ -286,7 +286,7 @@ module.exports = function Showroom() {
       return register.pointer + 1;
     } });
   Object.defineProperty(data, "total", { get: function get() {
-      return register.size;
+      return options.total;
     } });
 
   target.on("click", "#ftw-showroom-close", close);
