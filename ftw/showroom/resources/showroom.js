@@ -165,6 +165,11 @@ function Oberserver(initialValue) {
     return changed;
   }
 
+  function reset() {
+    changed = false;
+    value = undefined;
+  }
+
   Object.defineProperty(reveal, "value", {
     get: function get() {
       return value;
@@ -173,6 +178,7 @@ function Oberserver(initialValue) {
 
   reveal.update = update;
   reveal.hasChanged = hasChanged;
+  reveal.reset = reset;
 
   return Object.freeze(reveal);
 }
@@ -403,6 +409,7 @@ module.exports = function Showroom() {
   function close() {
     target.removeClass("ftw-showroom-open");
     element.hide();
+    observer.reset();
   }
 
   function open(item) {

@@ -92,6 +92,7 @@ module.exports = function Showroom(items = [], options) {
   function close() {
     target.removeClass("ftw-showroom-open");
     element.hide();
+    observer.reset();
   }
 
   function open(item) {

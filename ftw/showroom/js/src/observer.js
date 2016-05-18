@@ -15,12 +15,18 @@ export default function Oberserver(initialValue) {
 
   function hasChanged() { return changed; }
 
+  function reset() {
+    changed = false;
+    value = undefined;
+  }
+
   Object.defineProperty(reveal, "value", {
     get: () => { return value; }
   });
 
   reveal.update = update;
   reveal.hasChanged = hasChanged;
+  reveal.reset = reset;
 
   return Object.freeze(reveal);
 

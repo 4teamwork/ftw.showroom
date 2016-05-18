@@ -189,6 +189,14 @@ describe("Showroom", () => {
       event.hitEscape(fixture.el.querySelector("#outlet"));
     });
 
+    it("should be possible to reopen the closed item", () => {
+      let showroom = loadDefaultShowroom();
+      showroom.open();
+      showroom.close();
+      showroom.open();
+      assert.equal(fixture.el.querySelector(".ftw-showroom").style.display, "block");
+    });
+
   });
 
   describe("next", () => {

@@ -49,4 +49,22 @@ describe("Observer", () => {
     assert.isFalse(observer.hasChanged(), "The observer should not have recognized any changes");
   });
 
+  it("should not recognize any changes when the observer has been reset", () => {
+    let observer = Observer();
+    observer.update(1);
+    assert.isTrue(observer.hasChanged());
+    observer.reset();
+    assert.isFalse(observer.hasChanged(), "The observer should not habe any changes after a reset.");
+  });
+
+  it("should recognize changes when the observer has been reset and a new value has been set except `undefined`", () => {
+    let observer = Observer();
+    observer.update(1);
+    assert.isTrue(observer.hasChanged());
+    observer.reset();
+    assert.isFalse(observer.hasChanged(), "The observer should not habe any changes after a reset.");
+    observer.update(1);
+    assert.isTrue(observer.hasChanged(), "The observer should have changes after a reset when a new value has been set.");
+  });
+
 });
