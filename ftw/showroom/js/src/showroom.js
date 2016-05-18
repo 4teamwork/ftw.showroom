@@ -1,4 +1,4 @@
-import { noop, uuid, isHTMLElement } from "./utils"
+import { throttle, noop, uuid, isHTMLElement } from "./utils"
 import Item from "./item";
 import Observer from "./observer";
 import Register from "./register";
@@ -60,9 +60,13 @@ module.exports = function Showroom(items = [], options) {
 
   function fetch(item) { return $.get(item.target); };
 
+  let throttledNext = throttle(next, 1000, { trailing: false });
+
+  let throttledPrev = throttle(prev, 1000, { trailing: false });
+
   function bindEvents() {
-    element.on("click", "#ftw-showroom-next", next);
-    element.on("click", "#ftw-showroom-prev", prev);
+    element.on("click", "#ftw-showroom-next", throttledNext);
+    element.on("click", "#ftw-showroom-prev", throttledPrev);
   };
 
   function render(content) {
@@ -129,8 +133,8 @@ module.exports = function Showroom(items = [], options) {
 
   target.on("keydown", (e) => {
     event.isEscape(e, close);
-    event.isArrowRight(e, next);
-    event.isArrowLeft(e, prev);
+    event.isArrowRight(e, throttledNext);
+    event.isArrowLeft(e, throttledPrev);
   });
 
   var reveal = {

@@ -352,7 +352,7 @@ describe("Showroom", () => {
       event.click(fixture.el.querySelector("#ftw-showroom-prev"));
     });
 
-    it("sould show the previous item when hitting the left arrow key", () => {
+    it("sould show the previous item when hitting the left arrow key", (done) => {
       let showroom = loadDefaultShowroom();
 
       showroom.open();
@@ -436,6 +436,52 @@ describe("Showroom", () => {
       event.click(fixture.el.querySelector(".append"));
     });
 
+  });
+
+  describe("throttling", () => {
+    it("should not render more than one item within 1000ms when hitting right arrow several times", (done) => {
+      fixture.load("default_outlet.html");
+
+      let renderCalls = 0;
+      let showroom = Showroom(defaultItems, {
+        fetch: () => { return "<div></div>" },
+        render: () => { renderCalls += 1 }
+      });
+
+      event.hitArrowRight(fixture.el.querySelector("#outlet"));
+      setTimeout(() => {
+        event.hitArrowRight(fixture.el.querySelector("#outlet"));
+        assert.equal(renderCalls, 1, "The render method should have been called only one within 1000ms");
+        done();
+      }, 10);
+
+    });
+
+    it("should not render more than one item within 1000ms when hitting next button several times", (done) => {
+      fixture.load("default_outlet.html");
+
+      let renderCalls = 0;
+      let showroom = Showroom(defaultItems, {
+        fetch: () => {
+          return `
+            <div id='content'>content</div>
+            <button id='ftw-showroom-next'></button>
+            <button id='ftw-showroom-prev'></button>
+          `
+        },
+        render: () => { renderCalls += 1 }
+      });
+
+      showroom.open();
+
+      event.click(fixture.el.querySelector("#ftw-showroom-next"));
+      setTimeout(() => {
+        event.click(fixture.el.querySelector("#ftw-showroom-next"));
+        assert.equal(renderCalls, 1, "The render method should have been called only one within 1000ms");
+        done();
+      }, 10);
+
+    });
   });
 
 });

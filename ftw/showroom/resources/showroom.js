@@ -377,9 +377,13 @@ module.exports = function Showroom() {
     return $.get(item.target);
   };
 
+  var throttledNext = (0, _utils.throttle)(next, 1000, { trailing: false });
+
+  var throttledPrev = (0, _utils.throttle)(prev, 1000, { trailing: false });
+
   function bindEvents() {
-    element.on("click", "#ftw-showroom-next", next);
-    element.on("click", "#ftw-showroom-prev", prev);
+    element.on("click", "#ftw-showroom-next", throttledNext);
+    element.on("click", "#ftw-showroom-prev", throttledPrev);
   };
 
   function render(content) {
@@ -450,8 +454,8 @@ module.exports = function Showroom() {
 
   target.on("keydown", function (e) {
     event.isEscape(e, close);
-    event.isArrowRight(e, next);
-    event.isArrowLeft(e, prev);
+    event.isArrowRight(e, throttledNext);
+    event.isArrowLeft(e, throttledPrev);
   });
 
   var reveal = {
@@ -475,6 +479,7 @@ module.exports = function Showroom() {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./event":1,"./item":2,"./observer":3,"./register":4,"./utils":6}],6:[function(require,module,exports){
+(function (global){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -483,6 +488,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.noop = noop;
 exports.generateUUID = generateUUID;
 exports.isHTMLElement = isHTMLElement;
+exports.now = now;
+exports.throttle = throttle;
+var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
+
 function noop() {};
 
 function generateUUID() {
@@ -493,11 +502,62 @@ function generateUUID() {
     return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
   });
   return uuid;
-};
+}
 
 function isHTMLElement(obj) {
   return obj instanceof HTMLElement;
 }
 
+function now() {
+  return new Date().getTime();
+}
+
+// Inspired by http://underscorejs.org/#throttle
+function throttle() {
+  var func = arguments.length <= 0 || arguments[0] === undefined ? function () {} : arguments[0];
+  var wait = arguments.length <= 1 || arguments[1] === undefined ? 250 : arguments[1];
+  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+  var timeout = void 0;
+  var result = void 0;
+  var previous = 0;
+  options = $.extend({
+    leading: true,
+    trailing: true
+  }, options);
+
+  function later() {
+    previous = !options.leading ? 0 : now();
+    timeout = null;
+    result = func();
+  };
+
+  function throttled() {
+    var executionTimestamp = now();
+    if (!previous && !options.leading) previous = executionTimestamp;
+    var remaining = wait - (executionTimestamp - previous);
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = executionTimestamp;
+      result = func();
+    } else if (!timeout && !options.trailing) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+
+  throttled.cancel = function () {
+    clearTimeout(timeout);
+    previous = 0;
+    timeout = null;
+  };
+
+  return throttled;
+};
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[5])(5)
 });
