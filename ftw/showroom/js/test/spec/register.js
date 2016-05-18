@@ -4,8 +4,6 @@ let items;
 
 describe("Register", () => {
 
-  jasmine.DEFAULT_TIMEOUT_INTERVAL = 100;
-
   beforeEach(() => {
     items = [1, 2, 3, 4, 5];
   });
