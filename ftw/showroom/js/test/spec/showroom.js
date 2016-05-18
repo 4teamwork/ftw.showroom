@@ -333,7 +333,9 @@ describe("Showroom", () => {
       showroom.next();
 
       waitfor(() => {
-        return fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML === "1";
+        if(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML) {
+          return fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML === "1";
+        }
       }, () => {
         assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "1");
         done();
@@ -349,7 +351,10 @@ describe("Showroom", () => {
       showroom.next();
 
       waitfor(() => {
-        return fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML === "1";
+        if(fixture.el.querySelector("#outlet .ftw-showroom-current")) {
+          return fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML === "1";
+        }
+        return false;
       }, () => {
         assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "1");
         done();
@@ -372,6 +377,55 @@ describe("Showroom", () => {
       showroom.prev();
 
       assert.equal(renderCalls, 1, "Render should only be called once");
+    });
+
+  });
+
+  describe("append", () => {
+
+    it("should extend the current item set", () => {
+      fixture.load("append_list.html");
+      let newItems = fixture.el.querySelectorAll(".append");
+      let showroom = loadDefaultShowroom();
+      showroom.append(newItems);
+
+      assert.deepEqual(
+        showroom.items.map((item) => { return item.element.className }),
+        ["item", "item", "item", "item", "item", "item append", "item append", "item append", "item append", "item append"]
+      )
+    });
+
+    it("should attach the click event handler on the new items", () => {
+      fixture.load("append_list.html", "default_outlet.html");
+      let newItems = fixture.el.querySelectorAll(".append");
+
+      let showroom = Showroom(defaultItems, {
+        fetch: () => {
+          return `
+            <div id='content'>content</div>
+            <button id='ftw-showroom-next'></button>
+            <button id='ftw-showroom-prev'></button>
+          `;
+        },
+        target: "#outlet",
+        total: 10
+      });
+
+      showroom.append(newItems);
+
+      showroom.open();
+
+      waitfor(() => {
+        if(fixture.el.querySelector("#outlet .ftw-showroom-current")) {
+          return fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML === "6";
+        }
+        return false;
+      }, () => {
+        assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "6");
+        done();
+      });
+
+      event.click(fixture.el.querySelector(".append"));
     });
 
   });

@@ -428,6 +428,17 @@ module.exports = function Showroom() {
     open(register.current);
   }
 
+  function append(nodes) {
+    items = Array.prototype.slice.call(nodes);
+    items = items.map(function (item) {
+      return (0, _item2.default)(item);
+    });
+    items.map(function (item) {
+      return $(item.element).on("click", select);
+    });
+    register.append(items);
+  }
+
   target.on("click", "#ftw-showroom-close", close);
 
   target.on("keydown", function (e) {
@@ -441,7 +452,8 @@ module.exports = function Showroom() {
     open: open,
     close: close,
     next: next,
-    prev: prev
+    prev: prev,
+    append: append
   };
 
   Object.defineProperty(reveal, "items", { get: function get() {

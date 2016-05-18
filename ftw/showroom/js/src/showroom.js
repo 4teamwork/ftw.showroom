@@ -117,6 +117,13 @@ module.exports = function Showroom(items = [], options) {
     open(register.current);
   }
 
+  function append(nodes) {
+    items = Array.prototype.slice.call(nodes);
+    items = items.map(item => Item(item));
+    items.map(item => $(item.element).on("click", select));
+    register.append(items);
+  }
+
   target.on("click", "#ftw-showroom-close", close);
 
   target.on("keydown", (e) => {
@@ -130,7 +137,8 @@ module.exports = function Showroom(items = [], options) {
     open: open,
     close: close,
     next: next,
-    prev: prev
+    prev: prev,
+    append: append
   };
 
   Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
