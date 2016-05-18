@@ -1,4 +1,5 @@
 import { noop } from "./utils";
+import Oberserver from "./observer";
 var $ = require("jquery");
 
 export default function Register(items = [], options) {
@@ -12,15 +13,26 @@ export default function Register(items = [], options) {
 
   let reveal = {};
 
+  let oberserver = Oberserver(pointer);
 
-  function append(pushItems = []) { items = $.merge(items, pushItems); }
+  function append(pushItems = []) {
+    items = $.merge(items, pushItems);
+  }
+
+  function prepend(pushItems = []) {
+    pointer += pushItems.length;
+    items = $.merge(pushItems, items);
+  }
 
   function checkPointer() {
-    if (pointer === 0) {
-      options.head(reveal.current);
-    }
-    if (pointer === reveal.size - 1) {
-      options.tail(reveal.current);
+    oberserver.update(pointer);
+    if(oberserver.hasChanged()) {
+      if (pointer === 0) {
+        options.head(reveal.current);
+      }
+      if (pointer === reveal.size - 1) {
+        options.tail(reveal.current);
+      }
     }
   }
 
@@ -48,16 +60,21 @@ export default function Register(items = [], options) {
     checkPointer();
   }
 
+  function hasNext() { return pointer < items.length - 1; }
+
+  function hasPrev() { return pointer > 0; }
+
   Object.defineProperty(reveal, "current", { get: () => { return items[pointer]; }});
   Object.defineProperty(reveal, "size", { get: () => { return items.length; }});
   Object.defineProperty(reveal, "items", { get: () => { return items; }});
   Object.defineProperty(reveal, "pointer", { get: () => { return pointer; }});
+  reveal.hasNext = hasNext;
+  reveal.hasPrev = hasPrev;
   reveal.next = next;
   reveal.prev = prev;
+  reveal.prepend = prepend
   reveal.append = append;
   reveal.set = set;
-
-  checkPointer();
 
   return Object.freeze(reveal);
 

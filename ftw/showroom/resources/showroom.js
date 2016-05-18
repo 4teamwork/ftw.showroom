@@ -105,7 +105,7 @@ function click() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./utils":5}],2:[function(require,module,exports){
+},{"./utils":6}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -117,22 +117,67 @@ var _utils = require("./utils");
 
 function Item(element) {
 
+  var reveal = {};
   var showroomId = (0, _utils.generateUUID)();
-
-  var target = element.getAttribute("data-showroom-target") || "";
-  var title = element.getAttribute("data-showroom-title") || "";
+  var rendered = false;
 
   element.setAttribute("data-showroom-id", showroomId);
 
-  return Object.freeze({
-    element: element,
-    title: title,
-    id: showroomId,
-    target: target
+  reveal.element = element;
+  reveal.target = element.getAttribute("data-showroom-target") || "";
+  reveal.title = element.getAttribute("data-showroom-title") || "";
+  reveal.id = showroomId;
+  Object.defineProperty(reveal, "rendered", {
+    get: function get() {
+      return rendered;
+    },
+    set: function set(val) {
+      rendered = val;
+    }
   });
+
+  return reveal;
 }
 
-},{"./utils":5}],3:[function(require,module,exports){
+},{"./utils":6}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Oberserver;
+function Oberserver(initialValue) {
+
+  var value = initialValue;
+  var changed = false;
+  var reveal = {};
+
+  function update(newValue) {
+    if (newValue === value) {
+      changed = false;
+    } else {
+      changed = true;
+    }
+    value = newValue;
+  }
+
+  function hasChanged() {
+    return changed;
+  }
+
+  Object.defineProperty(reveal, "value", {
+    get: function get() {
+      return value;
+    }
+  });
+
+  reveal.update = update;
+  reveal.hasChanged = hasChanged;
+
+  return Object.freeze(reveal);
+}
+
+},{}],4:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -142,6 +187,12 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = Register;
 
 var _utils = require("./utils");
+
+var _observer = require("./observer");
+
+var _observer2 = _interopRequireDefault(_observer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
 
@@ -159,17 +210,30 @@ function Register() {
 
   var reveal = {};
 
+  var oberserver = (0, _observer2.default)(pointer);
+
   function append() {
     var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
     items = $.merge(items, pushItems);
   }
 
+  function prepend() {
+    var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    pointer += pushItems.length;
+    items = $.merge(pushItems, items);
+  }
+
   function checkPointer() {
-    if (pointer === 0) {
-      options.head(reveal.current);
-    }
-    if (pointer === reveal.size - 1) {
-      options.tail(reveal.current);
+    oberserver.update(pointer);
+    if (oberserver.hasChanged()) {
+      if (pointer === 0) {
+        options.head(reveal.current);
+      }
+      if (pointer === reveal.size - 1) {
+        options.tail(reveal.current);
+      }
     }
   }
 
@@ -197,6 +261,14 @@ function Register() {
     checkPointer();
   }
 
+  function hasNext() {
+    return pointer < items.length - 1;
+  }
+
+  function hasPrev() {
+    return pointer > 0;
+  }
+
   Object.defineProperty(reveal, "current", { get: function get() {
       return items[pointer];
     } });
@@ -209,18 +281,19 @@ function Register() {
   Object.defineProperty(reveal, "pointer", { get: function get() {
       return pointer;
     } });
+  reveal.hasNext = hasNext;
+  reveal.hasPrev = hasPrev;
   reveal.next = next;
   reveal.prev = prev;
+  reveal.prepend = prepend;
   reveal.append = append;
   reveal.set = set;
-
-  checkPointer();
 
   return Object.freeze(reveal);
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./utils":5}],4:[function(require,module,exports){
+},{"./observer":3,"./utils":6}],5:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -229,6 +302,10 @@ var _utils = require("./utils");
 var _item = require("./item");
 
 var _item2 = _interopRequireDefault(_item);
+
+var _observer = require("./observer");
+
+var _observer2 = _interopRequireDefault(_observer);
 
 var _register = require("./register");
 
@@ -250,7 +327,17 @@ module.exports = function Showroom() {
   var options = arguments[1];
 
 
-  var template = Handlebars.compile("\n    <div class=\"{{showroom.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          <span>/</span>\n          <span class=\"ftw-showroom-total\">{{showroom.total}}</span>\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
+  options = $.extend({
+    cssClass: "ftw-showroom",
+    render: render,
+    tail: _utils.noop,
+    head: _utils.noop,
+    fetch: fetch,
+    template: template,
+    target: "body"
+  }, options);
+
+  var template = Handlebars.compile("\n    <div class=\"{{showroom.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{#if showroom.total}}<span>/</span>{{/if}}\n          <span class=\"ftw-showroom-total\">{{showroom.total}}</span>\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
 
   var element = $();
 
@@ -268,34 +355,17 @@ module.exports = function Showroom() {
     return $(item.element).on("click", select);
   });
 
-  options = $.extend({
-    cssClass: "ftw-showroom",
-    render: render,
-    tail: _utils.noop,
-    head: _utils.noop,
-    fetch: fetch,
-    template: template,
-    target: "body"
-  }, options);
-
   var register = (0, _register2.default)(items, { tail: options.tail, head: options.head });
   var target = $(options.target);
+  var observer = (0, _observer2.default)();
 
   var data = { cssClass: options.cssClass };
   Object.defineProperty(data, "current", { get: function get() {
       return register.pointer + 1;
     } });
   Object.defineProperty(data, "total", { get: function get() {
-      return register.size;
+      return options.total;
     } });
-
-  target.on("click", "#ftw-showroom-close", close);
-
-  target.on("keydown", function (e) {
-    event.isEscape(e, close);
-    event.isArrowRight(e, next);
-    event.isArrowLeft(e, prev);
-  });
 
   function fetch(item) {
     return $.get(item.target);
@@ -307,9 +377,15 @@ module.exports = function Showroom() {
   };
 
   function render(content) {
-    return $.when(content).done(function (content) {
+    return $.when(content).pipe(function (content) {
+      return $(template({ showroom: data, content: content, item: register.current }));
+    });
+  }
+
+  function showItem(item) {
+    return $.when(options.fetch(item)).pipe(options.render).pipe(function (newElement) {
       element.remove();
-      element = $(template({ showroom: data, content: content, item: register.current }));
+      element = newElement || $();
       element.show();
       target.append(element).addClass("ftw-showroom-open");
       bindEvents();
@@ -335,7 +411,11 @@ module.exports = function Showroom() {
       return false;
     }
     register.set(item || register.items[0]);
-    return render(options.fetch(item));
+    observer.update(item);
+    if (observer.hasChanged()) {
+      return showItem(item);
+    }
+    return false;
   }
 
   function next() {
@@ -347,6 +427,14 @@ module.exports = function Showroom() {
     register.prev();
     open(register.current);
   }
+
+  target.on("click", "#ftw-showroom-close", close);
+
+  target.on("keydown", function (e) {
+    event.isEscape(e, close);
+    event.isArrowRight(e, next);
+    event.isArrowLeft(e, prev);
+  });
 
   var reveal = {
     data: data,
@@ -367,7 +455,7 @@ module.exports = function Showroom() {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./event":1,"./item":2,"./register":3,"./utils":5}],5:[function(require,module,exports){
+},{"./event":1,"./item":2,"./observer":3,"./register":4,"./utils":6}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -392,5 +480,5 @@ function isHTMLElement(obj) {
   return obj instanceof HTMLElement;
 }
 
-},{}]},{},[4])(4)
+},{}]},{},[5])(5)
 });

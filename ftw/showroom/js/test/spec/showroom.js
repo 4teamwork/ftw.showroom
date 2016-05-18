@@ -23,7 +23,8 @@ function loadDefaultShowroom() {
         <button id='ftw-showroom-prev'></button>
       `;
     },
-    target: "#outlet"
+    target: "#outlet",
+    total: 10
   });
 }
 
@@ -72,7 +73,7 @@ describe("Showroom", () => {
       assert.throws(() => { Showroom(dirtyItems); }, Error, "The object set is not consistend");
     });
 
-    it("sould extend items with showroom id.", () => {
+    it("should extend items with showroom id.", () => {
       let showroom = Showroom(defaultItems);
 
       assert.deepEqual(
@@ -82,13 +83,44 @@ describe("Showroom", () => {
       );
     });
 
-    it("sould have default data object.", () => {
+  });
+
+  describe("data", () => {
+
+    it("should have default valuea.", () => {
       let showroom = Showroom(defaultItems);
 
       assert.equal(showroom.data.cssClass, "ftw-showroom");
       assert.equal(showroom.data.current, 1);
-      assert.equal(showroom.data.total, 5);
+      assert.equal(showroom.data.total, undefined);
     });
+
+  });
+
+  describe("total", () => {
+
+    it("should be configurable", () => {
+      let showroom = loadDefaultShowroom();
+      showroom.open();
+
+      assert.equal(showroom.data.total, 10);
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
+    });
+
+    it("should render no total if not defined", () => {
+      fixture.load("default_outlet.html");
+      let showroom = Showroom(defaultItems, {
+        target: "#outlet",
+        fetch: () => {
+          return "<div id='content'>content</div>";
+        }
+      });
+      showroom.open();
+
+      assert.equal(showroom.data.total, undefined);
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "");
+    });
+
   });
 
   describe("open", () => {
@@ -99,8 +131,9 @@ describe("Showroom", () => {
       showroom.open(showroom.items[1]);
 
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "2");
-      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "5");
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom").className, "ftw-showroom");
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom").style.display, "block");
       assert.equal(fixture.el.querySelector("#outlet #content").innerHTML, "content");
     });
 
@@ -118,7 +151,7 @@ describe("Showroom", () => {
       showroom.open();
 
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "1");
-      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "5");
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom").className, "ftw-showroom");
       assert.equal(fixture.el.querySelector("#outlet #content").innerHTML, "content");
     });
@@ -145,7 +178,7 @@ describe("Showroom", () => {
       assert.equal(fixture.el.querySelector("#outlet").className, "");
     });
 
-    it("sould be triggered when hitting ESC key", (done) => {
+    it("should be triggered when hitting ESC key", (done) => {
       let showroom = loadDefaultShowroom();
       showroom.open();
 
@@ -172,7 +205,26 @@ describe("Showroom", () => {
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "3");
     });
 
-    it("sould remove the previous item from the DOM", () => {
+    it("should not render again when reaching the last item", () => {
+      fixture.load("default_outlet.html");
+
+      let renderCalls = 0;
+      let showroom = Showroom(defaultItems, {
+        fetch: () => { return "<div></div>" },
+        render: () => { renderCalls += 1 }
+      });
+
+      showroom.open();
+      showroom.next();
+      showroom.next();
+      showroom.next();
+      showroom.next();
+      showroom.next();
+
+      assert.equal(renderCalls, 5, "Render should only be called 5 times");
+    });
+
+    it("should remove the previous item from the DOM", () => {
       let showroom = loadDefaultShowroom();
       showroom.open();
       showroom.next();
@@ -188,8 +240,9 @@ describe("Showroom", () => {
       ), ["ftw-showroom"]);
     });
 
-    it("sould stay on the current item when reaching the end", () => {
+    it("should stay on the current item when reaching the end", () => {
       let showroom = loadDefaultShowroom();
+      showroom.open();
       showroom.next();
       showroom.next();
       showroom.next();
@@ -199,7 +252,7 @@ describe("Showroom", () => {
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "5");
     });
 
-    it("sould show the next item when hitting the next button", (done) => {
+    it("should show the next item when hitting the next button", (done) => {
       let showroom = loadDefaultShowroom();
 
       showroom.open();
@@ -214,7 +267,7 @@ describe("Showroom", () => {
       event.click(fixture.el.querySelector("#ftw-showroom-next"));
     });
 
-    it("sould show the next item when hitting the right arrow key", (done) => {
+    it("should show the next item when hitting the right arrow key", (done) => {
       let showroom = loadDefaultShowroom();
 
       showroom.open();
@@ -266,6 +319,7 @@ describe("Showroom", () => {
 
     it("sould stay on the current item when reaching the start", () => {
       let showroom = loadDefaultShowroom();
+      showroom.open();
       showroom.prev();
       showroom.prev();
 
@@ -302,6 +356,22 @@ describe("Showroom", () => {
       });
 
       event.hitArrowLeft(fixture.el.querySelector("#outlet"));
+    });
+
+    it("should not render again when reaching the first item", () => {
+      fixture.load("default_outlet.html");
+
+      let renderCalls = 0;
+      let showroom = Showroom(defaultItems, {
+        fetch: () => { return "<div></div>" },
+        render: () => { renderCalls += 1; return $("<div></div>") }
+      });
+
+      showroom.open();
+      showroom.prev();
+      showroom.prev();
+
+      assert.equal(renderCalls, 1, "Render should only be called once");
     });
 
   });

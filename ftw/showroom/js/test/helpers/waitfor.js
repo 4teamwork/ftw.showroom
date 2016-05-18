@@ -1,4 +1,4 @@
-var timeout = 1500;
+var timeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
 export default function waitFor(condition, callback, options) {
   options = options || {};
