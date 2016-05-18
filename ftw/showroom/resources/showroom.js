@@ -105,7 +105,7 @@ function click() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./utils":5}],2:[function(require,module,exports){
+},{"./utils":6}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -139,7 +139,45 @@ function Item(element) {
   return reveal;
 }
 
-},{"./utils":5}],3:[function(require,module,exports){
+},{"./utils":6}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Oberserver;
+function Oberserver(initialValue) {
+
+  var value = initialValue;
+  var changed = false;
+  var reveal = {};
+
+  function update(newValue) {
+    if (newValue === value) {
+      changed = false;
+    } else {
+      changed = true;
+    }
+    value = newValue;
+  }
+
+  function hasChanged() {
+    return changed;
+  }
+
+  Object.defineProperty(reveal, "value", {
+    get: function get() {
+      return value;
+    }
+  });
+
+  reveal.update = update;
+  reveal.hasChanged = hasChanged;
+
+  return Object.freeze(reveal);
+}
+
+},{}],4:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -149,6 +187,12 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = Register;
 
 var _utils = require("./utils");
+
+var _observer = require("./observer");
+
+var _observer2 = _interopRequireDefault(_observer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
 
@@ -166,21 +210,7 @@ function Register() {
 
   var reveal = {};
 
-  var oberserver = {
-    value: pointer,
-    changed: false,
-    update: function update(val) {
-      if (val === this.value) {
-        this.changed = false;
-      } else {
-        this.changed = true;
-      }
-      this.value = val;
-    },
-    hasChanged: function hasChanged() {
-      return this.changed;
-    }
-  };
+  var oberserver = (0, _observer2.default)(pointer);
 
   function append() {
     var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
@@ -251,9 +281,6 @@ function Register() {
   Object.defineProperty(reveal, "pointer", { get: function get() {
       return pointer;
     } });
-  Object.defineProperty(reveal, "changed", { get: function get() {
-      return oberserver.hasChanged();
-    } });
   reveal.hasNext = hasNext;
   reveal.hasPrev = hasPrev;
   reveal.next = next;
@@ -266,7 +293,7 @@ function Register() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./utils":5}],4:[function(require,module,exports){
+},{"./observer":3,"./utils":6}],5:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -275,6 +302,10 @@ var _utils = require("./utils");
 var _item = require("./item");
 
 var _item2 = _interopRequireDefault(_item);
+
+var _observer = require("./observer");
+
+var _observer2 = _interopRequireDefault(_observer);
 
 var _register = require("./register");
 
@@ -326,6 +357,7 @@ module.exports = function Showroom() {
 
   var register = (0, _register2.default)(items, { tail: options.tail, head: options.head });
   var target = $(options.target);
+  var observer = (0, _observer2.default)();
 
   var data = { cssClass: options.cssClass };
   Object.defineProperty(data, "current", { get: function get() {
@@ -334,14 +366,6 @@ module.exports = function Showroom() {
   Object.defineProperty(data, "total", { get: function get() {
       return options.total;
     } });
-
-  target.on("click", "#ftw-showroom-close", close);
-
-  target.on("keydown", function (e) {
-    event.isEscape(e, close);
-    event.isArrowRight(e, next);
-    event.isArrowLeft(e, prev);
-  });
 
   function fetch(item) {
     return $.get(item.target);
@@ -387,7 +411,11 @@ module.exports = function Showroom() {
       return false;
     }
     register.set(item || register.items[0]);
-    return showItem(item);
+    observer.update(item);
+    if (observer.hasChanged()) {
+      return showItem(item);
+    }
+    return false;
   }
 
   function next() {
@@ -399,6 +427,14 @@ module.exports = function Showroom() {
     register.prev();
     open(register.current);
   }
+
+  target.on("click", "#ftw-showroom-close", close);
+
+  target.on("keydown", function (e) {
+    event.isEscape(e, close);
+    event.isArrowRight(e, next);
+    event.isArrowLeft(e, prev);
+  });
 
   var reveal = {
     data: data,
@@ -419,7 +455,7 @@ module.exports = function Showroom() {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./event":1,"./item":2,"./register":3,"./utils":5}],5:[function(require,module,exports){
+},{"./event":1,"./item":2,"./observer":3,"./register":4,"./utils":6}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -444,5 +480,5 @@ function isHTMLElement(obj) {
   return obj instanceof HTMLElement;
 }
 
-},{}]},{},[4])(4)
+},{}]},{},[5])(5)
 });
