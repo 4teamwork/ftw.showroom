@@ -28,6 +28,8 @@ module.exports = function(grunt) {
       }
     },
 
+    karma: { unit: { configFile: "karma.conf.js" } },
+
     watch: {
       scripts: {
         files: ["./ftw/showroom/js/src/**/*.js"],
@@ -38,8 +40,10 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask("default", ["watch"]);
   grunt.registerTask("build", ["browserify"]);
+  grunt.registerTask("test", ["karma"]);
 
 };

@@ -1,5 +1,6 @@
 import Showroom from "showroom";
 import waitfor from "../helpers/waitfor";
+import * as Builder from "../helpers/builder";
 import * as event from "event";
 
 require('babelify-es6-polyfill');
@@ -12,24 +13,7 @@ function isUUID(uuid) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
 }
 
-function loadDefaultShowroom() {
-  fixture.load("default_outlet.html");
-
-  return Showroom(defaultItems, {
-    fetch: () => {
-      return `
-        <div id='content'>content</div>
-        <button id='ftw-showroom-next'></button>
-        <button id='ftw-showroom-prev'></button>
-      `;
-    },
-    target: "#outlet",
-    total: 10
-  });
-}
-
 describe("Showroom", () => {
-
 
   beforeAll(() => {
     fixture.setBase('ftw/showroom/js/test/fixtures');
@@ -100,7 +84,7 @@ describe("Showroom", () => {
   describe("total", () => {
 
     it("should be configurable", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
 
       assert.equal(showroom.data.total, 10);
@@ -126,7 +110,7 @@ describe("Showroom", () => {
   describe("open", () => {
 
     it("should attach a selected element to the target", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open(showroom.items[1]);
 
@@ -138,7 +122,7 @@ describe("Showroom", () => {
     });
 
     it("should mark the target with a class when open", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -146,7 +130,7 @@ describe("Showroom", () => {
     });
 
     it("should attach a default element to the target", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -160,7 +144,7 @@ describe("Showroom", () => {
   describe("close", () => {
 
     it("should hide the target element", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
       assert.equal(fixture.el.querySelector(".ftw-showroom").style.display, "block");
@@ -170,7 +154,7 @@ describe("Showroom", () => {
     });
 
     it("should the marker class", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
       showroom.close();
@@ -179,7 +163,7 @@ describe("Showroom", () => {
     });
 
     it("should be triggered when hitting ESC key", (done) => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
 
       waitfor(() => {
@@ -190,7 +174,7 @@ describe("Showroom", () => {
     });
 
     it("should be possible to reopen the closed item", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.close();
       showroom.open();
@@ -202,7 +186,7 @@ describe("Showroom", () => {
   describe("next", () => {
 
     it("should render the next item", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
 
@@ -233,7 +217,7 @@ describe("Showroom", () => {
     });
 
     it("should remove the previous item from the DOM", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
 
@@ -249,7 +233,7 @@ describe("Showroom", () => {
     });
 
     it("should stay on the current item when reaching the end", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
       showroom.next();
@@ -261,7 +245,7 @@ describe("Showroom", () => {
     });
 
     it("should show the next item when hitting the next button", (done) => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -276,7 +260,7 @@ describe("Showroom", () => {
     });
 
     it("should show the next item when hitting the right arrow key", (done) => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -295,7 +279,7 @@ describe("Showroom", () => {
   describe("prev", () => {
 
     it("should render the previous item", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
       showroom.prev();
@@ -310,7 +294,7 @@ describe("Showroom", () => {
     });
 
     it("sould remove the previous item from the DOM", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
 
@@ -326,7 +310,7 @@ describe("Showroom", () => {
     });
 
     it("sould stay on the current item when reaching the start", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.prev();
       showroom.prev();
@@ -335,7 +319,7 @@ describe("Showroom", () => {
     });
 
     it("sould show the previous item when hitting the prev button", (done) => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
       showroom.next();
@@ -353,7 +337,7 @@ describe("Showroom", () => {
     });
 
     it("sould show the previous item when hitting the left arrow key", () => {
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
 
       showroom.open();
       showroom.next();
@@ -394,7 +378,7 @@ describe("Showroom", () => {
     it("should extend the current item set", () => {
       fixture.load("append_list.html");
       let newItems = fixture.el.querySelectorAll(".append");
-      let showroom = loadDefaultShowroom();
+      let showroom = Builder.defaultShowroom();
       showroom.append(newItems);
 
       assert.deepEqual(
@@ -436,6 +420,52 @@ describe("Showroom", () => {
       event.click(fixture.el.querySelector(".append"));
     });
 
+  });
+
+  describe("throttling", () => {
+    it("should not render more than one item within 1000ms when hitting right arrow several times", (done) => {
+      fixture.load("default_outlet.html");
+
+      let renderCalls = 0;
+      let showroom = Showroom(defaultItems, {
+        fetch: () => { return "<div></div>" },
+        render: () => { renderCalls += 1 }
+      });
+
+      event.hitArrowRight(fixture.el.querySelector("#outlet"));
+      setTimeout(() => {
+        event.hitArrowRight(fixture.el.querySelector("#outlet"));
+        assert.equal(renderCalls, 1, "The render method should have been called only one within 1000ms");
+        done();
+      }, 10);
+
+    });
+
+    it("should not render more than one item within 1000ms when hitting next button several times", (done) => {
+      fixture.load("default_outlet.html");
+
+      let renderCalls = 0;
+      let showroom = Showroom(defaultItems, {
+        fetch: () => {
+          return `
+            <div id='content'>content</div>
+            <button id='ftw-showroom-next'></button>
+            <button id='ftw-showroom-prev'></button>
+          `
+        },
+        render: () => { renderCalls += 1 }
+      });
+
+      showroom.open();
+
+      event.click(fixture.el.querySelector("#ftw-showroom-next"));
+      setTimeout(() => {
+        event.click(fixture.el.querySelector("#ftw-showroom-next"));
+        assert.equal(renderCalls, 1, "The render method should have been called only one within 1000ms");
+        done();
+      }, 10);
+
+    });
   });
 
 });
