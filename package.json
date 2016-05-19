@@ -11,6 +11,7 @@
     "grunt": "*",
     "grunt-browserify": "*",
     "grunt-contrib-watch": "*",
+    "grunt-karma": "*",
     "karma": "^0.13.0",
     "karma-browserify": "^4.2.0",
     "jasmine-core": "*",
