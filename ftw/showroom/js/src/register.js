@@ -60,6 +60,11 @@ export default function Register(items = [], options) {
     checkPointer();
   }
 
+  function reset(resetItems = []) {
+    items = resetItems;
+    pointer = 0;
+  }
+
   function hasNext() { return pointer < items.length - 1; }
 
   function hasPrev() { return pointer > 0; }
@@ -75,6 +80,7 @@ export default function Register(items = [], options) {
   reveal.prepend = prepend
   reveal.append = append;
   reveal.set = set;
+  reveal.reset = reset;
 
   return Object.freeze(reveal);
 
