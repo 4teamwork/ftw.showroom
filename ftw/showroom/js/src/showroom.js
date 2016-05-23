@@ -100,6 +100,9 @@ module.exports = function Showroom(items = [], options) {
   }
 
   function open(item) {
+    if(!register.size) {
+      return false;
+    }
     item = item || register.items[0];
     if(!item) {
       return false;
