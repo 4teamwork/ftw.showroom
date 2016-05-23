@@ -468,5 +468,56 @@ describe("Showroom", () => {
     });
   });
 
+  describe("destroy", () => {
+
+    it("should reset the element to an empty jQuery object", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.isUndefined(showroom.element.html());
+    });
+
+    it("should remove the nodes from the DOM", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.equal(fixture.el.querySelectorAll(".ftw-showroom").length, 0);
+    });
+
+    it("should clear the items store", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.destroy();
+
+      assert.deepEqual(showroom.items, []);
+    });
+
+    it("should remove the showroom-open class on the target", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.equal(fixture.el.querySelector("#outlet").className, "");
+    });
+
+    it("should remove the showroom-id data attribute in the DOM", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.deepEqual(
+        Array.from(fixture.el.querySelectorAll(".item")).map(item => item.dataset["showroom-id"]),
+        [undefined, undefined, undefined, undefined, undefined]
+      );
+    });
+
+    it("should not be possible to reopen the showroom after a destruction", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+    });
+
+  });
 });
 

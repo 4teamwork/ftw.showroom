@@ -129,6 +129,14 @@ module.exports = function Showroom(items = [], options) {
     register.append(items);
   }
 
+  function destroy() {
+    element.remove();
+    register.reset();
+    element = $();
+    target.removeClass("ftw-showroom-open");
+    register.items.forEach(item => item.destroy());
+  }
+
   target.on("click", "#ftw-showroom-close", close);
 
   target.on("keydown", (e) => {
@@ -144,6 +152,7 @@ module.exports = function Showroom(items = [], options) {
     next: next,
     prev: prev,
     append: append
+    destroy: destroy
   };
 
   Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
