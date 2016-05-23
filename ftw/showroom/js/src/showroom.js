@@ -58,11 +58,11 @@ module.exports = function Showroom(items = [], options) {
   Object.defineProperty(data, "current", { get: () => { return register.pointer + 1; }});
   Object.defineProperty(data, "total", { get: () => { return options.total; }});
 
-  function fetch(item) { return $.get(item.target); };
-
   let throttledNext = throttle(next, 1000, { trailing: false });
 
   let throttledPrev = throttle(prev, 1000, { trailing: false });
+
+  function fetch(item) { return $.get(item.target); };
 
   function bindEvents() {
     element.on("click", "#ftw-showroom-next", throttledNext);
@@ -129,6 +129,14 @@ module.exports = function Showroom(items = [], options) {
     register.append(items);
   }
 
+  function reset(items = []) {
+    close();
+    items = Array.prototype.slice.call(items);
+    items = items.map(item => Item(item));
+    items.map(item => $(item.element).on("click", select));
+    register.reset(items);
+  }
+
   function destroy() {
     element.remove();
     register.reset();
@@ -151,7 +159,8 @@ module.exports = function Showroom(items = [], options) {
     close: close,
     next: next,
     prev: prev,
-    append: append
+    append: append,
+    reset: reset,
     destroy: destroy
   };
 
