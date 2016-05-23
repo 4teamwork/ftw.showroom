@@ -17,10 +17,10 @@ export default function Item(element) {
 
   return Object.freeze({
     id: showroomId,
-    element: element,
+    element,
     target: element.getAttribute("data-showroom-target") || "",
     title: element.getAttribute("data-showroom-title") || "",
-    destroy: destroy
+    destroy
   });
 
 }

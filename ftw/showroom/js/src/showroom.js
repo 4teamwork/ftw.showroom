@@ -11,11 +11,11 @@ module.exports = function Showroom(items = [], options) {
 
   options = $.extend({
     cssClass: "ftw-showroom",
-    render: render,
+    render,
     tail: noop,
     head: noop,
-    fetch: fetch,
-    template: template,
+    fetch,
+    template,
     target: "body"
   }, options);
 
@@ -104,7 +104,7 @@ module.exports = function Showroom(items = [], options) {
     if(!item) {
       return false;
     }
-    register.set(item || register.items[0]);
+    register.set(item);
     observer.update(item);
     if(observer.hasChanged()) {
       return showItem(item);
@@ -154,14 +154,14 @@ module.exports = function Showroom(items = [], options) {
   });
 
   var reveal = {
-    data: data,
-    open: open,
-    close: close,
-    next: next,
-    prev: prev,
-    append: append,
-    reset: reset,
-    destroy: destroy
+    data,
+    open,
+    close,
+    next,
+    prev,
+    append,
+    reset,
+    destroy
   };
 
   Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
