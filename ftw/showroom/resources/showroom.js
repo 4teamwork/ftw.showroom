@@ -123,20 +123,22 @@ function Item(element) {
 
   element.setAttribute("data-showroom-id", showroomId);
 
+  function destroy() {
+    element.removeAttribute("data-showroom-id");
+  }
+
   reveal.element = element;
   reveal.target = element.getAttribute("data-showroom-target") || "";
   reveal.title = element.getAttribute("data-showroom-title") || "";
   reveal.id = showroomId;
-  Object.defineProperty(reveal, "rendered", {
-    get: function get() {
-      return rendered;
-    },
-    set: function set(val) {
-      rendered = val;
-    }
-  });
 
-  return reveal;
+  return Object.freeze({
+    id: showroomId,
+    element: element,
+    target: element.getAttribute("data-showroom-target") || "",
+    title: element.getAttribute("data-showroom-title") || "",
+    destroy: destroy
+  });
 }
 
 },{"./utils":6}],3:[function(require,module,exports){
@@ -267,6 +269,13 @@ function Register() {
     checkPointer();
   }
 
+  function reset() {
+    var resetItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    items = resetItems;
+    pointer = 0;
+  }
+
   function hasNext() {
     return pointer < items.length - 1;
   }
@@ -294,6 +303,7 @@ function Register() {
   reveal.prepend = prepend;
   reveal.append = append;
   reveal.set = set;
+  reveal.reset = reset;
 
   return Object.freeze(reveal);
 }
@@ -343,6 +353,8 @@ module.exports = function Showroom() {
     target: "body"
   }, options);
 
+  var reveal = {};
+
   var template = Handlebars.compile("\n    <div class=\"{{showroom.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{#if showroom.total}}<span>/</span>{{/if}}\n          <span class=\"ftw-showroom-total\">{{showroom.total}}</span>\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
 
   var element = $();
@@ -365,21 +377,15 @@ module.exports = function Showroom() {
   var target = $(options.target);
   var observer = (0, _observer2.default)();
 
-  var data = { cssClass: options.cssClass };
-  Object.defineProperty(data, "current", { get: function get() {
-      return register.pointer + 1;
-    } });
-  Object.defineProperty(data, "total", { get: function get() {
-      return options.total;
-    } });
+  var throttledNext = (0, _utils.throttle)(next, 1000, { trailing: false });
+
+  var throttledPrev = (0, _utils.throttle)(prev, 1000, { trailing: false });
+
+  var isOpen = false;
 
   function fetch(item) {
     return $.get(item.target);
   };
-
-  var throttledNext = (0, _utils.throttle)(next, 1000, { trailing: false });
-
-  var throttledPrev = (0, _utils.throttle)(prev, 1000, { trailing: false });
 
   function bindEvents() {
     element.on("click", "#ftw-showroom-next", throttledNext);
@@ -388,7 +394,7 @@ module.exports = function Showroom() {
 
   function render(content) {
     return $.when(content).pipe(function (content) {
-      return $(template({ showroom: data, content: content, item: register.current }));
+      return $(template({ showroom: reveal, content: content, item: register.current }));
     });
   }
 
@@ -397,6 +403,7 @@ module.exports = function Showroom() {
       element.remove();
       element = newElement || $();
       element.show();
+      isOpen = true;
       target.append(element).addClass("ftw-showroom-open");
       bindEvents();
     });
@@ -414,19 +421,19 @@ module.exports = function Showroom() {
     target.removeClass("ftw-showroom-open");
     element.hide();
     observer.reset();
+    isOpen = false;
   }
 
   function open(item) {
-    item = item || register.items[0];
-    if (!item) {
+    if (!register.size) {
       return false;
     }
-    register.set(item || register.items[0]);
+    item = item || register.items[0];
+    register.set(item);
     observer.update(item);
     if (observer.hasChanged()) {
       return showItem(item);
     }
-    return false;
   }
 
   function next() {
@@ -450,6 +457,41 @@ module.exports = function Showroom() {
     register.append(items);
   }
 
+  function reset() {
+    var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    close();
+    items = Array.prototype.slice.call(items);
+    items = items.map(function (item) {
+      return (0, _item2.default)(item);
+    });
+    items.map(function (item) {
+      return $(item.element).on("click", select);
+    });
+    register.reset(items);
+  }
+
+  function destroy() {
+    element.remove();
+    register.reset();
+    element = $();
+    target.removeClass("ftw-showroom-open");
+    register.items.forEach(function (item) {
+      return item.destroy();
+    });
+  }
+
+  function setTotal(value) {
+    if (!(0, _utils.isNumeric)(value)) {
+      throw new Error(value + " is not a number");
+    }
+    options.total = value;
+    if (isOpen) {
+      observer.reset();
+      return open(register.current);
+    }
+  }
+
   target.on("click", "#ftw-showroom-close", close);
 
   target.on("keydown", function (e) {
@@ -458,20 +500,29 @@ module.exports = function Showroom() {
     event.isArrowLeft(e, throttledPrev);
   });
 
-  var reveal = {
-    data: data,
-    open: open,
-    close: close,
-    next: next,
-    prev: prev,
-    append: append
-  };
+  reveal.open = open;
+  reveal.close = close;
+  reveal.next = next;
+  reveal.prev = prev;
+  reveal.append = append;
+  reveal.reset = reset;
+  reveal.destroy = destroy;
+  reveal.setTotal = setTotal;
 
+  Object.defineProperty(reveal, "cssClass", { get: function get() {
+      return options.cssClass;
+    } });
+  Object.defineProperty(reveal, "current", { get: function get() {
+      return register.pointer + 1;
+    } });
   Object.defineProperty(reveal, "items", { get: function get() {
       return register.items;
     } });
   Object.defineProperty(reveal, "element", { get: function get() {
       return element;
+    } });
+  Object.defineProperty(reveal, "total", { get: function get() {
+      return options.total;
     } });
 
   return Object.freeze(reveal);
@@ -490,6 +541,7 @@ exports.generateUUID = generateUUID;
 exports.isHTMLElement = isHTMLElement;
 exports.now = now;
 exports.throttle = throttle;
+exports.isNumeric = isNumeric;
 var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
 
 function noop() {};
@@ -556,6 +608,10 @@ function throttle() {
   };
 
   return throttled;
+};
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
