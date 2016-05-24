@@ -71,12 +71,12 @@ describe("Showroom", () => {
 
   describe("data", () => {
 
-    it("should have default valuea.", () => {
+    it("should have default values.", () => {
       let showroom = Showroom(defaultItems);
 
-      assert.equal(showroom.data.cssClass, "ftw-showroom");
-      assert.equal(showroom.data.current, 1);
-      assert.equal(showroom.data.total, undefined);
+      assert.equal(showroom.cssClass, "ftw-showroom");
+      assert.equal(showroom.current, 1);
+      assert.equal(showroom.total, undefined);
     });
 
   });
@@ -87,7 +87,7 @@ describe("Showroom", () => {
       let showroom = Builder.defaultShowroom();
       showroom.open();
 
-      assert.equal(showroom.data.total, 10);
+      assert.equal(showroom.total, 10);
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
     });
 
@@ -101,10 +101,34 @@ describe("Showroom", () => {
       });
       showroom.open();
 
-      assert.equal(showroom.data.total, undefined);
+      assert.isUndefined(showroom.total);
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "");
     });
 
+  });
+
+  describe("setTotal", () => {
+    it("should be updated after a reset", (done) => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open().done(() => {
+        assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
+        showroom.setTotal(20).done(() => {
+          assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "20");
+          done();
+        });
+      });
+    });
+
+    it("should throw an error when no numberic type has been set", () => {
+      let showroom = Builder.defaultShowroom();
+      assert.throw(() => { showroom.setTotal("peter"); }, Error, "peter is not a number");
+    });
+
+    it("should not open an item if no item is already opened", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.setTotal(20);
+      assert.isNull(fixture.el.querySelector(".ftw-showroom"));
+    });
   });
 
   describe("open", () => {
