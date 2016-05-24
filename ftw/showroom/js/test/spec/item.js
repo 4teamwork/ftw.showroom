@@ -29,4 +29,14 @@ describe("Showroom Item", () => {
     assert.equal(item.title, "Google");
   });
 
+  describe("destroy", () => {
+
+    it("should remove the showroom-id in the data attributes", () => {
+      var item = Item(defaultItem);
+      item.destroy();
+      assert.isUndefined(item.element["showroom-id"]);
+    });
+
+  });
+
 });

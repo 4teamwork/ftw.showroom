@@ -71,12 +71,12 @@ describe("Showroom", () => {
 
   describe("data", () => {
 
-    it("should have default valuea.", () => {
+    it("should have default values.", () => {
       let showroom = Showroom(defaultItems);
 
-      assert.equal(showroom.data.cssClass, "ftw-showroom");
-      assert.equal(showroom.data.current, 1);
-      assert.equal(showroom.data.total, undefined);
+      assert.equal(showroom.cssClass, "ftw-showroom");
+      assert.equal(showroom.current, 1);
+      assert.equal(showroom.total, undefined);
     });
 
   });
@@ -87,7 +87,7 @@ describe("Showroom", () => {
       let showroom = Builder.defaultShowroom();
       showroom.open();
 
-      assert.equal(showroom.data.total, 10);
+      assert.equal(showroom.total, 10);
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
     });
 
@@ -101,10 +101,34 @@ describe("Showroom", () => {
       });
       showroom.open();
 
-      assert.equal(showroom.data.total, undefined);
+      assert.isUndefined(showroom.total);
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "");
     });
 
+  });
+
+  describe("setTotal", () => {
+    it("should be updated after a reset", (done) => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open().done(() => {
+        assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
+        showroom.setTotal(20).done(() => {
+          assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "20");
+          done();
+        });
+      });
+    });
+
+    it("should throw an error when no numberic type has been set", () => {
+      let showroom = Builder.defaultShowroom();
+      assert.throw(() => { showroom.setTotal("peter"); }, Error, "peter is not a number");
+    });
+
+    it("should not open an item if no item is already opened", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.setTotal(20);
+      assert.isNull(fixture.el.querySelector(".ftw-showroom"));
+    });
   });
 
   describe("open", () => {
@@ -466,6 +490,117 @@ describe("Showroom", () => {
       }, 10);
 
     });
+  });
+
+  describe("destroy", () => {
+
+    it("should reset the element to an empty jQuery object", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.isUndefined(showroom.element.html());
+    });
+
+    it("should remove the nodes from the DOM", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.equal(fixture.el.querySelectorAll(".ftw-showroom").length, 0);
+    });
+
+    it("should clear the items store", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.destroy();
+
+      assert.deepEqual(showroom.items, []);
+    });
+
+    it("should remove the showroom-open class on the target", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.equal(fixture.el.querySelector("#outlet").className, "");
+    });
+
+    it("should remove the showroom-id data attribute in the DOM", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+
+      assert.deepEqual(
+        Array.from(fixture.el.querySelectorAll(".item")).map(item => item.dataset["showroom-id"]),
+        [undefined, undefined, undefined, undefined, undefined]
+      );
+    });
+
+    it("should not be possible to reopen the showroom after a destruction", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.destroy();
+    });
+
+  });
+
+  describe("reset", () => {
+
+    it("should empty the items store with no arguments", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.reset();
+
+      assert.deepEqual(showroom.items, []);
+    });
+
+    it("should update the showroom with the new items", () => {
+      fixture.load("append_list.html", "default_outlet.html");
+      let newItems = fixture.el.querySelectorAll(".append");
+
+      let showroom = Showroom(defaultItems, {
+        fetch: () => {
+          return `
+            <div id='content'>content</div>
+            <button id='ftw-showroom-next'></button>
+            <button id='ftw-showroom-prev'></button>
+          `;
+        },
+        target: "#outlet"
+      });
+
+      showroom.reset(newItems);
+
+      assert.deepEqual(
+        showroom.items.map((item) => { return item.element.querySelector(".title").innerHTML }),
+        ["6", "7", "8", "9", "10"]
+      )
+    });
+
+    it("should be possible to open a reset item", () => {
+      fixture.load("append_list.html", "default_outlet.html");
+      let newItems = fixture.el.querySelectorAll(".append");
+
+      let showroom = Showroom(defaultItems, {
+        fetch: () => {
+          return `
+            <div id='content'>content</div>
+            <button id='ftw-showroom-next'></button>
+            <button id='ftw-showroom-prev'></button>
+          `;
+        },
+        target: "#outlet"
+      });
+
+      showroom.reset(newItems);
+
+      showroom.open();
+
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "1");
+      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom").className, "ftw-showroom");
+      assert.equal(fixture.el.querySelector("#outlet #content").innerHTML, "content");
+    });
+
   });
 
 });

@@ -1,4 +1,4 @@
-import { throttle, noop, uuid, isHTMLElement } from "./utils"
+import { isNumeric, throttle, noop, uuid, isHTMLElement } from "./utils"
 import Item from "./item";
 import Observer from "./observer";
 import Register from "./register";
@@ -11,13 +11,15 @@ module.exports = function Showroom(items = [], options) {
 
   options = $.extend({
     cssClass: "ftw-showroom",
-    render: render,
+    render,
     tail: noop,
     head: noop,
-    fetch: fetch,
-    template: template,
+    fetch,
+    template,
     target: "body"
   }, options);
+
+  var reveal = {};
 
   let template = Handlebars.compile(`
     <div class="{{showroom.cssClass}}">
@@ -54,15 +56,13 @@ module.exports = function Showroom(items = [], options) {
   let target = $(options.target);
   let observer = Observer();
 
-  let data = { cssClass: options.cssClass };
-  Object.defineProperty(data, "current", { get: () => { return register.pointer + 1; }});
-  Object.defineProperty(data, "total", { get: () => { return options.total; }});
-
-  function fetch(item) { return $.get(item.target); };
-
   let throttledNext = throttle(next, 1000, { trailing: false });
 
   let throttledPrev = throttle(prev, 1000, { trailing: false });
+
+  let isOpen = false;
+
+  function fetch(item) { return $.get(item.target); };
 
   function bindEvents() {
     element.on("click", "#ftw-showroom-next", throttledNext);
@@ -71,7 +71,7 @@ module.exports = function Showroom(items = [], options) {
 
   function render(content) {
     return $.when(content).pipe((content) => {
-      return $(template({ showroom: data, content: content, item: register.current }));
+      return $(template({ showroom: reveal, content: content, item: register.current }));
     });
   }
 
@@ -80,6 +80,7 @@ module.exports = function Showroom(items = [], options) {
       element.remove();
       element = newElement || $();
       element.show();
+      isOpen = true;
       target.append(element).addClass("ftw-showroom-open");
       bindEvents();
     });
@@ -97,19 +98,19 @@ module.exports = function Showroom(items = [], options) {
     target.removeClass("ftw-showroom-open");
     element.hide();
     observer.reset();
+    isOpen = false;
   }
 
   function open(item) {
-    item = item || register.items[0];
-    if(!item) {
+    if(!register.size) {
       return false;
     }
-    register.set(item || register.items[0]);
+    item = item || register.items[0];
+    register.set(item);
     observer.update(item);
     if(observer.hasChanged()) {
       return showItem(item);
     }
-    return false;
   }
 
   function next() {
@@ -129,6 +130,33 @@ module.exports = function Showroom(items = [], options) {
     register.append(items);
   }
 
+  function reset(items = []) {
+    close();
+    items = Array.prototype.slice.call(items);
+    items = items.map(item => Item(item));
+    items.map(item => $(item.element).on("click", select));
+    register.reset(items);
+  }
+
+  function destroy() {
+    element.remove();
+    register.reset();
+    element = $();
+    target.removeClass("ftw-showroom-open");
+    register.items.forEach(item => item.destroy());
+  }
+
+  function setTotal(value) {
+    if(!isNumeric(value)) {
+      throw new Error(value + " is not a number");
+    }
+    options.total = value;
+    if(isOpen) {
+      observer.reset();
+      return open(register.current);
+    }
+  }
+
   target.on("click", "#ftw-showroom-close", close);
 
   target.on("keydown", (e) => {
@@ -137,17 +165,20 @@ module.exports = function Showroom(items = [], options) {
     event.isArrowLeft(e, throttledPrev);
   });
 
-  var reveal = {
-    data: data,
-    open: open,
-    close: close,
-    next: next,
-    prev: prev,
-    append: append
-  };
+  reveal.open = open;
+  reveal.close = close;
+  reveal.next = next;
+  reveal.prev = prev;
+  reveal.append = append;
+  reveal.reset = reset;
+  reveal.destroy = destroy;
+  reveal.setTotal = setTotal;
 
+  Object.defineProperty(reveal, "cssClass", { get: () => { return options.cssClass; }});
+  Object.defineProperty(reveal, "current", { get: () => { return register.pointer + 1; }});
   Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
   Object.defineProperty(reveal, "element", { get: () => { return element; }});
+  Object.defineProperty(reveal, "total", { get: () => { return options.total; }});
 
   return Object.freeze(reveal);
 

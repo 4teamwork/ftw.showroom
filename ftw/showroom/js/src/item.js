@@ -8,15 +8,19 @@ export default function Item(element) {
 
   element.setAttribute("data-showroom-id", showroomId);
 
+  function destroy() { element.removeAttribute("data-showroom-id"); }
+
   reveal.element = element;
   reveal.target = element.getAttribute("data-showroom-target") || "";
   reveal.title = element.getAttribute("data-showroom-title") || "";
   reveal.id = showroomId;
-  Object.defineProperty(reveal, "rendered", {
-    get: () => { return rendered; },
-    set: (val) => { rendered = val }
-  });
 
-  return reveal;
+  return Object.freeze({
+    id: showroomId,
+    element,
+    target: element.getAttribute("data-showroom-target") || "",
+    title: element.getAttribute("data-showroom-title") || "",
+    destroy
+  });
 
 }

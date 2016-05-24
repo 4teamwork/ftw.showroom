@@ -263,6 +263,8 @@ or
 
   showroom.open(item);
 
+------------
+
 **Showroom.close**
 
 Closes the overlay by hiding the element.
@@ -270,6 +272,8 @@ Closes the overlay by hiding the element.
 .. code:: javascript
 
   showroom.close();
+
+------------
 
 **Showroom.next**
 
@@ -279,6 +283,8 @@ Opens the next item in the item queue. When the pointer reaches the last item th
 
   showroom.next();
 
+------------
+
 **Showroom.prev**
 
 Opens the previous item in the item queue. When the pointer reaches the first item the showroom does nothing.
@@ -286,6 +292,8 @@ Opens the previous item in the item queue. When the pointer reaches the first it
 .. code:: javascript
 
   showroom.prev();
+
+------------
 
 **Showroom.append**
 
@@ -304,3 +312,46 @@ or
 
   let newItems = $(".newItems");
   showroom.append(newItems);
+
+------------
+
+**Showroom.reset**
+
+Reset the current item store with new items. The overlay will be closed and the pointer set to `0`.
+To empty the item store reset with no arguments.
+
+.. code:: javascript
+
+  let newItems = document.querySelectorAll(".newItems");
+  showroom.reset(newItems);
+
+or
+
+.. code:: javascript
+
+  let newItems = document.querySelectorAll(".newItems");
+  showroom.reset();
+
+------------
+
+**Showroom.destroy**
+
+After destroying the showroom is no longer able to open any items. The store will be reset and the marker class removed.
+The overlay will be closed as well.
+All items will loose their `data-showroom-id`.
+
+.. code:: javascript
+
+
+  showroom.destroy();
+
+------------
+
+**Showroom.setTotal**
+
+Updates the total value and rerenders the opened overlay.
+The method does only allow numeric values.
+
+.. code:: javascript
+
+  showroom.setTotal(34);

@@ -1,15 +1,15 @@
-import { throttle, noop, uuid, isHTMLElement } from "utils"
+import { isNumeric, throttle, noop, uuid, isHTMLElement } from "utils"
 
 describe("Utils", () => {
+
+  let htmlElement = document.createElement("a");
+  let plainObject = {};
+  let string = "string";
+  let number = 2;
 
   describe("isHTMLElement", () => {
 
     it("should recognize DOM element", () => {
-      var htmlElement = document.createElement("a");
-      var plainObject = {};
-      var string = "string";
-      var number = 2;
-
       assert.isTrue(isHTMLElement(htmlElement), "htmlElement should be recognized as an htmlElement");
       assert.isFalse(isHTMLElement(plainObject), "plainObject should not be recognized as an htmlElement");
       assert.isFalse(isHTMLElement(string), "string should not be recognized as an htmlElement");
@@ -53,5 +53,31 @@ describe("Utils", () => {
 
   });
 
+  describe("isNumberic", () => {
+
+    it("should only recognize regualr numbers as a number", () => {
+      assert.isFalse(isNumeric(htmlElement));
+      assert.isFalse(isNumeric(plainObject));
+      assert.isFalse(isNumeric(string));
+      assert.isFalse(isNumeric(null));
+      assert.isFalse(isNumeric(undefined));
+      assert.isFalse(isNumeric([]));
+      assert.isFalse(isNumeric(""));
+      assert.isTrue(isNumeric(number));
+    });
+
+    it("should not recognize Infinity as a number", () => {
+      assert.isFalse(isNumeric(Infinity));
+    });
+
+    it("should not recognize -Infinity as a number", () => {
+      assert.isFalse(isNumeric(-Infinity));
+    });
+
+    it("should not recognize NaN as a number", () => {
+      assert.isFalse(isNumeric(NaN));
+    });
+
+  });
 
 });

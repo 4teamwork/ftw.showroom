@@ -167,7 +167,7 @@ describe("Register", () => {
       let headCalls = 0;
       let tailCalls = 0;
 
-      let register = Regsiter([1, 2],{
+      let register = Regsiter([1, 2], {
         head: () => {
           headCalls += 1;
         },
@@ -197,7 +197,7 @@ describe("Register", () => {
     it("sould call tail again when the item set has been extended", () => {
       let tailCalls = 0;
 
-      let register = Regsiter([1, 2],{
+      let register = Regsiter([1, 2], {
         tail: () => {
           tailCalls += 1;
         }
@@ -216,7 +216,7 @@ describe("Register", () => {
     it("sould call head again when the item set has been extended", () => {
       let headCalls = 0;
 
-      let register = Regsiter([1, 2],{
+      let register = Regsiter([1, 2], {
         head: () => {
           headCalls += 1;
         }
@@ -299,5 +299,27 @@ describe("Register", () => {
 
   });
 
-});
+  describe("reset", () => {
 
+    it("should clear the item with no arguments", () => {
+      let register = Regsiter([1, 2, 3]);
+      register.reset();
+      assert.deepEqual(register.items, []);
+    });
+
+    it("should reset the pointer to 0", () => {
+      let register = Regsiter([1, 2, 3]);
+      register.set(register.items[1]);
+      register.reset();
+      assert.deepEqual(register.pointer, 0);
+    });
+
+    it("should reset the items with the given items as arguments", () => {
+      let register = Regsiter([1, 2, 3]);
+      register.reset([5, 6, 7]);
+      assert.deepEqual(register.items, [5, 6, 7]);
+    });
+
+  });
+
+});
