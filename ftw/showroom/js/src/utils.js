@@ -57,3 +57,7 @@ export function throttle(func = function() {}, wait = 250, options = {}) {
 
   return throttled;
 };
+
+export function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
