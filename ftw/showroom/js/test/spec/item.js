@@ -1,6 +1,7 @@
 import Item from "item";
 
 var defaultItem;
+var serversideItem;
 
 function isUUID(uuid) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
@@ -8,8 +9,9 @@ function isUUID(uuid) {
 
 beforeAll(() => {
   fixture.setBase('ftw/showroom/js/test/fixtures');
-  fixture.load("default_item.html");
+  fixture.load("default_item.html", "serverside_item.html");
   defaultItem = fixture.el.querySelector(".item");
+  serversideItem = fixture.el.querySelector(".serverside-item");
 });
 
 describe("Showroom Item", () => {
@@ -17,6 +19,11 @@ describe("Showroom Item", () => {
   it("should extend a new item with a showroom id.", () => {
     var item = Item(defaultItem);
     assert.isTrue(isUUID(item.id));
+  });
+
+  it("should overtake the id which is already set on the item as an HTML attribute.", () => {
+    var item = Item(serversideItem);
+    assert.equal(item.id, "10");
   });
 
   it("should extract showroom target.", () => {

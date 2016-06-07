@@ -67,6 +67,14 @@ describe("Showroom", () => {
       );
     });
 
+    it("should keep the showroom id if already set through an HTML data attribute", () => {
+      let showroom = Builder.serversideShowroom();
+
+      assert.deepEqual(
+        Array.from(showroom.items).map(item => item.id), ["10", "11", "12", "13", "14"]
+      );
+    });
+
   });
 
   describe("data", () => {

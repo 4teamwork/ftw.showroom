@@ -19,7 +19,9 @@ module.exports = function Showroom(items = [], options) {
     target: "body"
   }, options);
 
-  var reveal = {};
+  let instance;
+
+  let reveal = {};
 
   let template = Handlebars.compile(`
     <div class="{{showroom.cssClass}}">
