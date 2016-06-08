@@ -383,6 +383,15 @@ module.exports = function Showroom() {
 
   var isOpen = false;
 
+  function checkArrows() {
+    if (!register.hasNext()) {
+      $("#ftw-showroom-next", element).hide();
+    }
+    if (!register.hasPrev()) {
+      $("#ftw-showroom-prev", element).hide();
+    }
+  }
+
   function fetch(item) {
     return $.get(item.target);
   };
@@ -406,6 +415,7 @@ module.exports = function Showroom() {
       isOpen = true;
       target.append(element).addClass("ftw-showroom-open");
       bindEvents();
+      checkArrows();
     });
   };
 
