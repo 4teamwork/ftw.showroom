@@ -18,7 +18,8 @@ module.exports = function Showroom(items = [], options) {
     template,
     target: "body",
     displayCurrent: true,
-    displayTotal: true
+    displayTotal: true,
+    total: 0
   }, options);
 
   var reveal = {};
@@ -31,8 +32,9 @@ module.exports = function Showroom(items = [], options) {
             <span class="ftw-showroom-current">{{showroom.current}}</span>
           {{/if}}
           {{#if showroom.options.displayTotal}}
-            {{#if showroom.options.total}}<span>/</span>{{/if}}
-            <span class="ftw-showroom-total">{{showroom.options.total}}</span>
+            {{#if showroom.options.total}}<span>/</span>
+              <span class="ftw-showroom-total">{{showroom.options.total}}</span>
+            {{/if}}
           {{/if}}
         </div>
         <span class="ftw-showroom-title">{{item.title}}</span>
@@ -69,7 +71,7 @@ module.exports = function Showroom(items = [], options) {
   let isOpen = false;
 
   function checkArrows() {
-    if(!register.hasNext()) {
+    if(register.pointer >= options.total - 1) {
       $("#ftw-showroom-next", element).hide();
     }
     if(!register.hasPrev()) {

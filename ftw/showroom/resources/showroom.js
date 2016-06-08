@@ -352,12 +352,13 @@ module.exports = function Showroom() {
     template: template,
     target: "body",
     displayCurrent: true,
-    displayTotal: true
+    displayTotal: true,
+    total: 0
   }, options);
 
   var reveal = {};
 
-  var template = Handlebars.compile("\n    <div class=\"{{showroom.options.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          {{#if showroom.options.displayCurrent}}\n            <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{/if}}\n          {{#if showroom.options.displayTotal}}\n            {{#if showroom.options.total}}<span>/</span>{{/if}}\n            <span class=\"ftw-showroom-total\">{{showroom.options.total}}</span>\n          {{/if}}\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
+  var template = Handlebars.compile("\n    <div class=\"{{showroom.options.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          {{#if showroom.options.displayCurrent}}\n            <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{/if}}\n          {{#if showroom.options.displayTotal}}\n            {{#if showroom.options.total}}<span>/</span>\n              <span class=\"ftw-showroom-total\">{{showroom.options.total}}</span>\n            {{/if}}\n          {{/if}}\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
 
   var element = $();
 
@@ -386,7 +387,7 @@ module.exports = function Showroom() {
   var isOpen = false;
 
   function checkArrows() {
-    if (!register.hasNext()) {
+    if (register.pointer >= options.total - 1) {
       $("#ftw-showroom-next", element).hide();
     }
     if (!register.hasPrev()) {
