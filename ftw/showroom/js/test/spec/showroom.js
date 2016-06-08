@@ -69,14 +69,29 @@ describe("Showroom", () => {
 
   });
 
-  describe("data", () => {
+  describe("options", () => {
 
     it("should have default values.", () => {
       let showroom = Showroom(defaultItems);
 
-      assert.equal(showroom.cssClass, "ftw-showroom");
-      assert.equal(showroom.current, 1);
-      assert.equal(showroom.total, undefined);
+      assert.equal(showroom.options.cssClass, "ftw-showroom");
+      assert.isUndefined(showroom.options.total);
+    });
+
+    it("displayOptions", () => {
+      fixture.load("default_outlet.html");
+      let showroom = Showroom(defaultItems, {
+        target: "#outlet",
+        displayTotal: false,
+        displayCurrent: false,
+        fetch: () => {
+          return "<div id='content'>content</div>";
+        }
+      });
+      showroom.open();
+
+      assert.isNull(fixture.el.querySelector(".ftw-showroom-total"));
+      assert.isNull(fixture.el.querySelector(".ftw-showroom-current"));
     });
 
   });
@@ -86,8 +101,7 @@ describe("Showroom", () => {
     it("should be configurable", () => {
       let showroom = Builder.defaultShowroom();
       showroom.open();
-
-      assert.equal(showroom.total, 10);
+      assert.equal(showroom.options.total, 10);
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
     });
 
