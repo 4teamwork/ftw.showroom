@@ -350,12 +350,14 @@ module.exports = function Showroom() {
     head: _utils.noop,
     fetch: fetch,
     template: template,
-    target: "body"
+    target: "body",
+    displayCurrent: true,
+    displayTotal: true
   }, options);
 
   var reveal = {};
 
-  var template = Handlebars.compile("\n    <div class=\"{{showroom.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{#if showroom.total}}<span>/</span>{{/if}}\n          <span class=\"ftw-showroom-total\">{{showroom.total}}</span>\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
+  var template = Handlebars.compile("\n    <div class=\"{{showroom.options.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          {{#if showroom.options.displayCurrent}}\n            <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{/if}}\n          {{#if showroom.options.displayTotal}}\n            {{#if showroom.options.total}}<span>/</span>{{/if}}\n            <span class=\"ftw-showroom-total\">{{showroom.options.total}}</span>\n          {{/if}}\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
 
   var element = $();
 
@@ -519,8 +521,8 @@ module.exports = function Showroom() {
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;
 
-  Object.defineProperty(reveal, "cssClass", { get: function get() {
-      return options.cssClass;
+  Object.defineProperty(reveal, "options", { get: function get() {
+      return options;
     } });
   Object.defineProperty(reveal, "current", { get: function get() {
       return register.pointer + 1;
@@ -530,9 +532,6 @@ module.exports = function Showroom() {
     } });
   Object.defineProperty(reveal, "element", { get: function get() {
       return element;
-    } });
-  Object.defineProperty(reveal, "total", { get: function get() {
-      return options.total;
     } });
 
   return Object.freeze(reveal);

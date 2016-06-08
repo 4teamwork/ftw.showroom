@@ -16,18 +16,24 @@ module.exports = function Showroom(items = [], options) {
     head: noop,
     fetch,
     template,
-    target: "body"
+    target: "body",
+    displayCurrent: true,
+    displayTotal: true
   }, options);
 
   var reveal = {};
 
   let template = Handlebars.compile(`
-    <div class="{{showroom.cssClass}}">
+    <div class="{{showroom.options.cssClass}}">
       <header class="ftw-showroom-header">
         <div class="ftw-showroom-left">
-          <span class="ftw-showroom-current">{{showroom.current}}</span>
-          {{#if showroom.total}}<span>/</span>{{/if}}
-          <span class="ftw-showroom-total">{{showroom.total}}</span>
+          {{#if showroom.options.displayCurrent}}
+            <span class="ftw-showroom-current">{{showroom.current}}</span>
+          {{/if}}
+          {{#if showroom.options.displayTotal}}
+            {{#if showroom.options.total}}<span>/</span>{{/if}}
+            <span class="ftw-showroom-total">{{showroom.options.total}}</span>
+          {{/if}}
         </div>
         <span class="ftw-showroom-title">{{item.title}}</span>
         <div class="ftw-showroom-right">
@@ -184,11 +190,10 @@ module.exports = function Showroom(items = [], options) {
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;
 
-  Object.defineProperty(reveal, "cssClass", { get: () => { return options.cssClass; }});
+  Object.defineProperty(reveal, "options", { get: () => { return options; }});
   Object.defineProperty(reveal, "current", { get: () => { return register.pointer + 1; }});
   Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
   Object.defineProperty(reveal, "element", { get: () => { return element; }});
-  Object.defineProperty(reveal, "total", { get: () => { return options.total; }});
 
   return Object.freeze(reveal);
 
