@@ -29,7 +29,6 @@ export function singleShowroom() {
         <button id='ftw-showroom-prev'></button>
       `;
     },
-    target: "#outlet",
-    total: 10
+    target: "#outlet"
   });
 }

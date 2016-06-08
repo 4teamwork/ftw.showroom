@@ -75,7 +75,7 @@ describe("Showroom", () => {
       let showroom = Showroom(defaultItems);
 
       assert.equal(showroom.options.cssClass, "ftw-showroom");
-      assert.isUndefined(showroom.options.total);
+      assert.equal(showroom.options.total, 0);
     });
 
     it("displayOptions", () => {
@@ -115,8 +115,8 @@ describe("Showroom", () => {
       });
       showroom.open();
 
-      assert.isUndefined(showroom.total);
-      assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "");
+      assert.equal(showroom.options.total, 0);
+      assert.isNull(fixture.el.querySelector("#outlet .ftw-showroom-total"));
     });
 
   });
@@ -642,6 +642,7 @@ describe("Showroom", () => {
     it("should not show next arrows at the end the stream", () => {
 
       let showroom = Builder.defaultShowroom();
+      showroom.setTotal(5);
       showroom.open(showroom.items[4]);
 
       assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "none");
@@ -663,6 +664,15 @@ describe("Showroom", () => {
       let showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
+
+      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+    });
+
+    it("should show next arrow even when the manually set total is greather than the actual batch", () => {
+      let showroom = Builder.defaultShowroom();
+      showroom.setTotal(10);
+      showroom.open(showroom.items[4]);
 
       assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
       assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
