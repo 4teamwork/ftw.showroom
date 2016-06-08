@@ -603,5 +603,58 @@ describe("Showroom", () => {
 
   });
 
+  describe("arrows", () => {
+
+    it("should not show any arrows if there is only one item in the stream", () => {
+
+      let showroom = Builder.singleShowroom();
+      showroom.open();
+
+      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "none");
+      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "none");
+
+    });
+
+    it("should not show prev arrow at the start of the stream", () => {
+
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+
+      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "none");
+
+    });
+
+    it("should not show next arrows at the end the stream", () => {
+
+      let showroom = Builder.defaultShowroom();
+      showroom.open(showroom.items[4]);
+
+      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "none");
+      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+    });
+
+    it("should show next arrow when leaving the last item", () => {
+
+      let showroom = Builder.defaultShowroom();
+      showroom.open(showroom.items[4]);
+      showroom.prev();
+
+      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+    });
+
+    it("should show prev arrow when leaving the first item", () => {
+
+      let showroom = Builder.defaultShowroom();
+      showroom.open();
+      showroom.next();
+
+      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+    });
+
+  });
+
 });
 
