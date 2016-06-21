@@ -374,7 +374,7 @@ describe("Showroom", () => {
       event.click(fixture.el.querySelector("#ftw-showroom-prev"));
     });
 
-    it("sould show the previous item when hitting the left arrow key", () => {
+    it("sould show the previous item when hitting the left arrow key", (done) => {
       let showroom = Builder.defaultShowroom();
 
       showroom.open();
@@ -425,7 +425,7 @@ describe("Showroom", () => {
       )
     });
 
-    it("should attach the click event handler on the new items", () => {
+    it("should attach the click event handler on the new items", (done) => {
       fixture.load("append_list.html", "default_outlet.html");
       let newItems = fixture.el.querySelectorAll(".append");
 
