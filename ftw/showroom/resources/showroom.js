@@ -470,6 +470,17 @@ module.exports = function Showroom() {
     register.append(items);
   }
 
+  function prepend(nodes) {
+    items = Array.prototype.slice.call(nodes);
+    items = items.map(function (item) {
+      return (0, _item2.default)(item);
+    });
+    items.map(function (item) {
+      return $(item.element).on("click", select);
+    });
+    register.prepend(items);
+  }
+
   function reset() {
     var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
@@ -518,6 +529,7 @@ module.exports = function Showroom() {
   reveal.next = next;
   reveal.prev = prev;
   reveal.append = append;
+  reveal.prepend = prepend;
   reveal.reset = reset;
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;

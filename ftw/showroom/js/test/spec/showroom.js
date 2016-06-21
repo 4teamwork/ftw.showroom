@@ -460,6 +460,58 @@ describe("Showroom", () => {
 
   });
 
+
+  describe("prepend", () => {
+
+    it("should extend the current item list at the top", () => {
+      fixture.load("prepend_list.html");
+      let newItems = fixture.el.querySelectorAll(".prepend");
+      let showroom = Builder.defaultShowroom();
+      showroom.prepend(newItems);
+
+      assert.deepEqual(
+        showroom.items.map((item) => { return item.element.className }),
+        [ "item prepend", "item prepend", "item prepend", "item prepend",
+          "item prepend", "item", "item", "item", "item", "item"]
+      )
+    });
+
+    it("should attach the click event handler on the new items", (done) => {
+      fixture.load("prepend_list.html", "default_outlet.html");
+      let newItems = fixture.el.querySelectorAll(".prepend");
+
+      let showroom = Showroom(defaultItems, {
+        fetch: () => {
+          return `
+            <div id='content'>content</div>
+            <button id='ftw-showroom-next'></button>
+            <button id='ftw-showroom-prev'></button>
+          `;
+        },
+        target: "#outlet",
+        total: 10
+      });
+
+      showroom.prepend(newItems);
+
+      showroom.open();
+
+      waitfor(() => {
+        if(fixture.el.querySelector("#outlet .ftw-showroom-current")) {
+          return fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML === "1";
+        }
+        return false;
+      }, () => {
+        assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-current").innerHTML, "1");
+        done();
+      });
+
+      event.click(fixture.el.querySelector(".prepend"));
+    });
+
+  });
+
+
   describe("throttling", () => {
     it("should not render more than one item within 1000ms when hitting right arrow several times", (done) => {
       fixture.load("default_outlet.html");
@@ -681,4 +733,3 @@ describe("Showroom", () => {
   });
 
 });
-
