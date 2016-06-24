@@ -236,12 +236,16 @@ function Register() {
   function checkPointer() {
     oberserver.update(pointer);
     if (oberserver.hasChanged()) {
-      if (pointer === 0) {
-        options.head(reveal.current);
-      }
-      if (pointer === reveal.size - 1) {
-        options.tail(reveal.current);
-      }
+      performCalls();
+    }
+  }
+
+  function performCalls() {
+    if (pointer === 0) {
+      options.head(reveal.current);
+    }
+    if (pointer === reveal.size - 1) {
+      options.tail(reveal.current);
     }
   }
 
@@ -304,6 +308,7 @@ function Register() {
   reveal.append = append;
   reveal.set = set;
   reveal.reset = reset;
+  reveal.performCalls = performCalls;
 
   return Object.freeze(reveal);
 }
@@ -353,7 +358,8 @@ module.exports = function Showroom() {
     target: "body",
     displayCurrent: true,
     displayTotal: true,
-    total: 0
+    total: 0,
+    offset: 0
   }, options);
 
   var reveal = {};
@@ -387,12 +393,11 @@ module.exports = function Showroom() {
   var isOpen = false;
 
   function checkArrows() {
-    if (register.pointer >= options.total - 1) {
-      $("#ftw-showroom-next", element).hide();
-    }
-    if (!register.hasPrev()) {
-      $("#ftw-showroom-prev", element).hide();
-    }
+    var nextButton = $("#ftw-showroom-next", element);
+    var prevButton = $("#ftw-showroom-prev", element);
+
+    current() < options.total ? nextButton.show() : nextButton.hide();
+    register.hasPrev() ? prevButton.show() : prevButton.hide();
   }
 
   function fetch(item) {
@@ -445,6 +450,7 @@ module.exports = function Showroom() {
     register.set(item);
     observer.update(item);
     if (observer.hasChanged()) {
+      register.performCalls();
       return showItem(item);
     }
   }
@@ -468,6 +474,7 @@ module.exports = function Showroom() {
       return $(item.element).on("click", select);
     });
     register.append(items);
+    checkArrows();
   }
 
   function prepend(nodes) {
@@ -478,11 +485,16 @@ module.exports = function Showroom() {
     items.map(function (item) {
       return $(item.element).on("click", select);
     });
+    if (options.offset > 0) {
+      options.offset -= items.length;
+    }
     register.prepend(items);
+    checkArrows();
   }
 
   function reset() {
     var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+    var offset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
 
     close();
     items = Array.prototype.slice.call(items);
@@ -492,7 +504,9 @@ module.exports = function Showroom() {
     items.map(function (item) {
       return $(item.element).on("click", select);
     });
+    options.offset = offset;
     register.reset(items);
+    checkArrows();
   }
 
   function destroy() {
@@ -514,6 +528,10 @@ module.exports = function Showroom() {
       observer.reset();
       return open(register.current);
     }
+  }
+
+  function current() {
+    return register.pointer + 1 + options.offset;
   }
 
   target.on("click", "#ftw-showroom-close", close);
@@ -538,7 +556,7 @@ module.exports = function Showroom() {
       return options;
     } });
   Object.defineProperty(reveal, "current", { get: function get() {
-      return register.pointer + 1;
+      return current();
     } });
   Object.defineProperty(reveal, "items", { get: function get() {
       return register.items;

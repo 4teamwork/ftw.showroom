@@ -19,7 +19,8 @@ module.exports = function Showroom(items = [], options) {
     target: "body",
     displayCurrent: true,
     displayTotal: true,
-    total: 0
+    total: 0,
+    offset: 0
   }, options);
 
   var reveal = {};
@@ -71,12 +72,11 @@ module.exports = function Showroom(items = [], options) {
   let isOpen = false;
 
   function checkArrows() {
-    if(register.pointer >= options.total - 1) {
-      $("#ftw-showroom-next", element).hide();
-    }
-    if(!register.hasPrev()) {
-      $("#ftw-showroom-prev", element).hide();
-    }
+    var nextButton = $("#ftw-showroom-next", element);
+    var prevButton = $("#ftw-showroom-prev", element);
+
+    current() < options.total ? nextButton.show() : nextButton.hide();
+    register.hasPrev() ? prevButton.show() : prevButton.hide();
   }
 
   function fetch(item) { return $.get(item.target); };
@@ -127,6 +127,7 @@ module.exports = function Showroom(items = [], options) {
     register.set(item);
     observer.update(item);
     if(observer.hasChanged()) {
+      register.performCalls()
       return showItem(item);
     }
   }
@@ -146,21 +147,28 @@ module.exports = function Showroom(items = [], options) {
     items = items.map(item => Item(item));
     items.map(item => $(item.element).on("click", select));
     register.append(items);
+    checkArrows();
   }
 
   function prepend(nodes) {
     items = Array.prototype.slice.call(nodes);
     items = items.map(item => Item(item));
     items.map(item => $(item.element).on("click", select));
+    if (options.offset > 0) {
+      options.offset -= items.length;
+    }
     register.prepend(items);
+    checkArrows();
   }
 
-  function reset(items = []) {
+  function reset(items = [], offset = 0) {
     close();
     items = Array.prototype.slice.call(items);
     items = items.map(item => Item(item));
     items.map(item => $(item.element).on("click", select));
+    options.offset = offset;
     register.reset(items);
+    checkArrows();
   }
 
   function destroy() {
@@ -182,6 +190,10 @@ module.exports = function Showroom(items = [], options) {
     }
   }
 
+  function current() {
+    return register.pointer + 1 + options.offset;
+  }
+
   target.on("click", "#ftw-showroom-close", close);
 
   target.on("keydown", (e) => {
@@ -201,7 +213,7 @@ module.exports = function Showroom(items = [], options) {
   reveal.setTotal = setTotal;
 
   Object.defineProperty(reveal, "options", { get: () => { return options; }});
-  Object.defineProperty(reveal, "current", { get: () => { return register.pointer + 1; }});
+  Object.defineProperty(reveal, "current", { get: () => { return current(); }});
   Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
   Object.defineProperty(reveal, "element", { get: () => { return element; }});
 
