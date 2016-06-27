@@ -148,6 +148,13 @@ module.exports = function Showroom(items = [], options) {
     register.append(items);
   }
 
+  function prepend(nodes) {
+    items = Array.prototype.slice.call(nodes);
+    items = items.map(item => Item(item));
+    items.map(item => $(item.element).on("click", select));
+    register.prepend(items);
+  }
+
   function reset(items = []) {
     close();
     items = Array.prototype.slice.call(items);
@@ -188,6 +195,7 @@ module.exports = function Showroom(items = [], options) {
   reveal.next = next;
   reveal.prev = prev;
   reveal.append = append;
+  reveal.prepend = prepend;
   reveal.reset = reset;
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;

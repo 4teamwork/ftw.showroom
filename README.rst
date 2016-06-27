@@ -315,6 +315,26 @@ or
 
 ------------
 
+**Showroom.prepend**
+
+Extend the current item queue with new items, similar to the ``append`` method, but the items are prepended at the beginning of the queue.
+The pointer remains unaffected.
+The prepend method accepts a `NodeList <https://developer.mozilla.org/en/docs/Web/API/NodeList>`_ or a `jQuery <http://api.jquery.com/jquery/>`_
+
+.. code:: javascript
+
+  let newItems = document.querySelectorAll(".newItems");
+  showroom.prepend(newItems);
+
+or
+
+.. code:: javascript
+
+  let newItems = $(".newItems");
+  showroom.prepend(newItems);
+
+------------
+
 **Showroom.reset**
 
 Reset the current item store with new items. The overlay will be closed and the pointer set to `0`.
