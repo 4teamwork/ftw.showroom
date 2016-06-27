@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.1 (unreleased)
+1.1.0 (2016-06-27)
 ------------------
 
 - Provide option to prepend items to the showroom queue.
