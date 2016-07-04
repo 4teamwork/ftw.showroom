@@ -23,6 +23,8 @@ module.exports = function Showroom(items = [], options) {
     offset: 0
   }, options);
 
+  setOffset(options.offset);
+
   var reveal = {};
 
   let template = Handlebars.compile(`
@@ -166,7 +168,7 @@ module.exports = function Showroom(items = [], options) {
     items = Array.prototype.slice.call(items);
     items = items.map(item => Item(item));
     items.map(item => $(item.element).on("click", select));
-    options.offset = offset;
+    setOffset(offset);
     register.reset(items);
     checkArrows();
   }
@@ -177,6 +179,10 @@ module.exports = function Showroom(items = [], options) {
     element = $();
     target.removeClass("ftw-showroom-open");
     register.items.forEach(item => item.destroy());
+  }
+
+  function setOffset(value) {
+    options.offset = Math.max(0, value);
   }
 
   function setTotal(value) {
@@ -211,6 +217,7 @@ module.exports = function Showroom(items = [], options) {
   reveal.reset = reset;
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;
+  reveal.setOffset = setOffset;
 
   Object.defineProperty(reveal, "options", { get: () => { return options; }});
   Object.defineProperty(reveal, "current", { get: () => { return current(); }});

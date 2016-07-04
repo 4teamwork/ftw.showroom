@@ -362,6 +362,8 @@ module.exports = function Showroom() {
     offset: 0
   }, options);
 
+  setOffset(options.offset);
+
   var reveal = {};
 
   var template = Handlebars.compile("\n    <div class=\"{{showroom.options.cssClass}}\">\n      <header class=\"ftw-showroom-header\">\n        <div class=\"ftw-showroom-left\">\n          {{#if showroom.options.displayCurrent}}\n            <span class=\"ftw-showroom-current\">{{showroom.current}}</span>\n          {{/if}}\n          {{#if showroom.options.displayTotal}}\n            {{#if showroom.options.total}}<span>/</span>\n              <span class=\"ftw-showroom-total\">{{showroom.options.total}}</span>\n            {{/if}}\n          {{/if}}\n        </div>\n        <span class=\"ftw-showroom-title\">{{item.title}}</span>\n        <div class=\"ftw-showroom-right\">\n          <a id=\"ftw-showroom-close\" class=\"ftw-showroom-button\"></a>\n        </div>\n      </header>\n      <div class=\"ftw-showroom-content\">\n        {{{content}}}\n      </div>\n    </div>\n  ");
@@ -504,7 +506,7 @@ module.exports = function Showroom() {
     items.map(function (item) {
       return $(item.element).on("click", select);
     });
-    options.offset = offset;
+    setOffset(offset);
     register.reset(items);
     checkArrows();
   }
@@ -517,6 +519,10 @@ module.exports = function Showroom() {
     register.items.forEach(function (item) {
       return item.destroy();
     });
+  }
+
+  function setOffset(value) {
+    options.offset = Math.max(0, value);
   }
 
   function setTotal(value) {
@@ -551,6 +557,7 @@ module.exports = function Showroom() {
   reveal.reset = reset;
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;
+  reveal.setOffset = setOffset;
 
   Object.defineProperty(reveal, "options", { get: function get() {
       return options;

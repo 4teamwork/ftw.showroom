@@ -67,6 +67,11 @@ describe("Showroom", () => {
       );
     });
 
+    it("should not accept negative offset", () => {
+      let showroom = Showroom(defaultItems, {offset: -3});
+      assert.equal(showroom.options.offset, 0);
+    })
+
   });
 
   describe("options", () => {
@@ -774,6 +779,13 @@ describe("Showroom", () => {
       });
       showroom.open();
       assert.equal(showroom.options.offset, 13);
+    });
+
+    it("must not be negative", () => {
+      let showroom = Builder.defaultShowroom();
+
+      showroom.setOffset(-77);
+      assert.equal(showroom.options.offset, 0);
     });
 
     it("should shift the current index by value given in the options", () => {
