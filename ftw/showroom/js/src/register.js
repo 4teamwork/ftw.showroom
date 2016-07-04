@@ -27,12 +27,16 @@ export default function Register(items = [], options) {
   function checkPointer() {
     oberserver.update(pointer);
     if(oberserver.hasChanged()) {
-      if (pointer === 0) {
-        options.head(reveal.current);
-      }
-      if (pointer === reveal.size - 1) {
-        options.tail(reveal.current);
-      }
+      performCalls();
+    }
+  }
+
+  function performCalls() {
+    if (pointer === 0) {
+      options.head(reveal.current);
+    }
+    if (pointer === reveal.size - 1) {
+      options.tail(reveal.current);
     }
   }
 
@@ -81,6 +85,7 @@ export default function Register(items = [], options) {
   reveal.append = append;
   reveal.set = set;
   reveal.reset = reset;
+  reveal.performCalls = performCalls;
 
   return Object.freeze(reveal);
 

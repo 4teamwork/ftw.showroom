@@ -67,6 +67,11 @@ describe("Showroom", () => {
       );
     });
 
+    it("should not accept negative offset", () => {
+      let showroom = Showroom(defaultItems, {offset: -3});
+      assert.equal(showroom.options.offset, 0);
+    })
+
   });
 
   describe("options", () => {
@@ -76,6 +81,7 @@ describe("Showroom", () => {
 
       assert.equal(showroom.options.cssClass, "ftw-showroom");
       assert.equal(showroom.options.total, 0);
+      assert.equal(showroom.options.offset, 0);
     });
 
     it("displayOptions", () => {
@@ -176,6 +182,26 @@ describe("Showroom", () => {
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom").className, "ftw-showroom");
       assert.equal(fixture.el.querySelector("#outlet #content").innerHTML, "content");
+    });
+
+    it("should execute head call when opened on first item of batch", (done) => {
+      let showroom = Showroom(defaultItems, {
+        head: (current) => {
+          done();
+        },
+        total: 10,
+      });
+      showroom.open();
+    });
+
+    it("should execute tail call when opened on last item of batch", (done) => {
+      let showroom = Showroom(defaultItems, {
+        tail: (current) => {
+          done();
+        },
+        total: 10,
+      });
+      showroom.open(showroom.items[showroom.items.length - 1]);
     });
   });
 
@@ -667,6 +693,19 @@ describe("Showroom", () => {
       assert.equal(fixture.el.querySelector("#outlet #content").innerHTML, "content");
     });
 
+    it("should reset showroom offset", () => {
+      let showroom = Showroom(defaultItems, {
+        offset: 10,
+        total: 20,
+        target: "#outlet"
+      });
+      showroom.open();
+      showroom.reset();
+
+      assert.deepEqual(showroom.items, []);
+      assert.equal(showroom.options.offset, 0);
+    });
+
   });
 
   describe("arrows", () => {
@@ -728,6 +767,69 @@ describe("Showroom", () => {
 
       assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
       assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+    });
+
+  });
+
+  describe("offset", () => {
+
+    it("should be configurable", () => {
+      let showroom = Showroom(defaultItems, {
+        offset: 13,
+      });
+      showroom.open();
+      assert.equal(showroom.options.offset, 13);
+    });
+
+    it("must not be negative", () => {
+      let showroom = Builder.defaultShowroom();
+
+      showroom.setOffset(-77);
+      assert.equal(showroom.options.offset, 0);
+    });
+
+    it("should shift the current index by value given in the options", () => {
+      fixture.load("default_outlet.html");
+      let showroom = Showroom(defaultItems, {
+        offset: 10,
+        total: 20,
+        target: "#outlet",
+        fetch: () => { return "<div id='content'>content</div>"; }
+      });
+      showroom.open();
+
+      assert.equal(fixture.el.querySelector(".ftw-showroom-current").innerHTML, "11");
+    });
+
+    it("should respect offset when calling next", () => {
+      fixture.load("default_outlet.html");
+      let showroom = Showroom(defaultItems, {
+        offset: 10,
+        total: 20,
+        target: "#outlet",
+        fetch: () => { return "<div id='content'>content</div>"; }
+      });
+      showroom.open();
+      showroom.next();
+
+      assert.equal(fixture.el.querySelector(".ftw-showroom-current").innerHTML, "12");
+    });
+
+    it("should respect offset when calling prev", () => {
+      fixture.load("default_outlet.html", "default_list.html");
+      let showroom = Showroom(defaultItems, {
+        head: (current) => {
+          showroom.prepend(fixture.el.querySelectorAll(".item"));
+        },
+        offset: 10,
+        target: "#outlet",
+        fetch: () => { return "<div id='content'>content</div>"; }
+      });
+      showroom.setTotal(20);
+      showroom.open();
+      showroom.prev();
+
+      assert.equal(fixture.el.querySelector(".ftw-showroom-current").innerHTML, "10");
     });
 
   });

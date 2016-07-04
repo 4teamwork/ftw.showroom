@@ -4,7 +4,10 @@ Changelog
 1.1.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Provide offset option for showroom.
+  The offset is added to the current number and allows to display correct
+  item number for batched items.
+  [deiferni]
 
 
 1.1.1 (2016-07-04)
