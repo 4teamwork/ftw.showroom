@@ -135,11 +135,17 @@ module.exports = function Showroom(items = [], options) {
   }
 
   function next() {
+    if(!isOpen) {
+      return false;
+    }
     register.next();
     open(register.current);
   }
 
   function prev() {
+    if(!isOpen) {
+      return false;
+    }
     register.prev();
     open(register.current);
   }

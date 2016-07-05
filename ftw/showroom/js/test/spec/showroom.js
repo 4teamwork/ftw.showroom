@@ -548,10 +548,12 @@ describe("Showroom", () => {
         render: () => { renderCalls += 1 }
       });
 
+      showroom.open();
+
       event.hitArrowRight(fixture.el.querySelector("#outlet"));
       setTimeout(() => {
         event.hitArrowRight(fixture.el.querySelector("#outlet"));
-        assert.equal(renderCalls, 1, "The render method should have been called only one within 1000ms");
+        assert.equal(renderCalls, 2, "The render method should have been called only twice within 1000ms");
         done();
       }, 10);
 
