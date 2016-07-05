@@ -32,3 +32,19 @@ export function singleShowroom() {
     target: "#outlet"
   });
 }
+
+export function referenceShowroom() {
+  fixture.load("default_outlet.html", "reference_item.html");
+  let item = fixture.el.querySelectorAll(".showroom-item");
+
+  return Showroom(item, {
+    fetch: () => {
+      return `
+        <div id='content'>content</div>
+        <button id='ftw-showroom-next'></button>
+        <button id='ftw-showroom-prev'></button>
+      `;
+    },
+    target: "#outlet"
+  });
+}

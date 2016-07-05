@@ -57,6 +57,14 @@ describe("Showroom", () => {
       assert.throws(() => { Showroom(dirtyItems); }, Error, "The object set is not consistend");
     });
 
+    it("should throw error when a showroom item has a reference", () => {
+      fixture.load("dirty_item_list.html");
+
+      assert.throws(() => {
+        Showroom(fixture.el.querySelectorAll(".item"));
+      }, Error, "Showroom items must not contain references");
+    });
+
     it("should extend items with showroom id.", () => {
       let showroom = Showroom(defaultItems);
 
@@ -548,10 +556,12 @@ describe("Showroom", () => {
         render: () => { renderCalls += 1 }
       });
 
+      showroom.open();
+
       event.hitArrowRight(fixture.el.querySelector("#outlet"));
       setTimeout(() => {
         event.hitArrowRight(fixture.el.querySelector("#outlet"));
-        assert.equal(renderCalls, 1, "The render method should have been called only one within 1000ms");
+        assert.equal(renderCalls, 2, "The render method should have been called only twice within 1000ms");
         done();
       }, 10);
 
@@ -830,6 +840,54 @@ describe("Showroom", () => {
       showroom.prev();
 
       assert.equal(fixture.el.querySelector(".ftw-showroom-current").innerHTML, "10");
+    });
+
+  });
+
+  describe("reference", () => {
+    it("should respect predefined id on a showroom item", () => {
+      let showroom = Builder.referenceShowroom();
+      showroom.open();
+
+      assert.equal(fixture.el.querySelector(".showroom-item").dataset.showroomId, "reference-1");
+      assert.deepEqual(
+        Array.from(showroom.items).map(
+          item => item.id
+        ), ["reference-1", "reference-2"]
+      );
+    });
+
+    it("should be able to open the referenced item", (done) => {
+      let showroom = Builder.referenceShowroom();
+
+      waitfor(() => {
+        return fixture.el.querySelector(".ftw-showroom") &&
+               fixture.el.querySelector(".ftw-showroom").style.display === "block";
+      }, () => {
+        assert.equal(fixture.el.querySelector(".ftw-showroom-title").innerHTML, "Reference 2");
+        done();
+      });
+
+      event.click(fixture.el.querySelectorAll(".showroom-reference")[1]);
+    });
+
+    it("should refresh newly added references", (done) => {
+      let showroom = Builder.referenceShowroom();
+
+      // Add this additional reference to the DOM after the first initialisation
+      var ref = $('<a id="additional-reference" href="#" data-showroom-target-item="reference-2" class="showroom-reference"></a>');
+      fixture.el.appendChild(ref[0]);
+      showroom.refresh();
+
+      waitfor(() => {
+        return fixture.el.querySelector(".ftw-showroom") &&
+               fixture.el.querySelector(".ftw-showroom").style.display === "block";
+      }, () => {
+        assert.equal(fixture.el.querySelector(".ftw-showroom-title").innerHTML, "Reference 2");
+        done();
+      });
+
+      event.click(fixture.el.querySelector("#additional-reference"));
     });
 
   });

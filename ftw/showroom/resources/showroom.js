@@ -118,19 +118,13 @@ var _utils = require("./utils");
 function Item(element) {
 
   var reveal = {};
-  var showroomId = (0, _utils.generateUUID)();
-  var rendered = false;
+  var showroomId = element.getAttribute("data-showroom-id") || (0, _utils.generateUUID)();
 
   element.setAttribute("data-showroom-id", showroomId);
 
   function destroy() {
     element.removeAttribute("data-showroom-id");
   }
-
-  reveal.element = element;
-  reveal.target = element.getAttribute("data-showroom-target") || "";
-  reveal.title = element.getAttribute("data-showroom-title") || "";
-  reveal.id = showroomId;
 
   return Object.freeze({
     id: showroomId,
@@ -359,7 +353,8 @@ module.exports = function Showroom() {
     displayCurrent: true,
     displayTotal: true,
     total: 0,
-    offset: 0
+    offset: 0,
+    references: Array.prototype.slice.call(document.querySelectorAll(".showroom-reference"))
   }, options);
 
   setOffset(options.offset);
@@ -377,11 +372,21 @@ module.exports = function Showroom() {
     throw new Error("The object set is not consistend");
   }
 
+  if (items.filter(function (item) {
+    return item.getAttribute("data-showroom-target-item");
+  }).length) {
+    throw new Error("Showroom items must not contain references");
+  }
+
   items = items.map(function (item) {
     return (0, _item2.default)(item);
   });
   items.map(function (item) {
     return $(item.element).on("click", select);
+  });
+
+  options.references.map(function (reference) {
+    return $(reference).on("click", select);
   });
 
   var register = (0, _register2.default)(items, { tail: options.tail, head: options.head });
@@ -432,7 +437,7 @@ module.exports = function Showroom() {
   function select(event) {
     event.preventDefault();
     var item = register.items.filter(function (item) {
-      return item.id === event.currentTarget.getAttribute("data-showroom-id");
+      return item.id === (event.currentTarget.getAttribute("data-showroom-id") || event.currentTarget.getAttribute("data-showroom-target-item"));
     })[0];
     open(item);
   }
@@ -458,11 +463,17 @@ module.exports = function Showroom() {
   }
 
   function next() {
+    if (!isOpen) {
+      return false;
+    }
     register.next();
     open(register.current);
   }
 
   function prev() {
+    if (!isOpen) {
+      return false;
+    }
     register.prev();
     open(register.current);
   }
@@ -509,6 +520,13 @@ module.exports = function Showroom() {
     setOffset(offset);
     register.reset(items);
     checkArrows();
+  }
+
+  function refresh() {
+    options.references = Array.prototype.slice.call(document.querySelectorAll(".showroom-reference"));
+    options.references.map(function (reference) {
+      return $(reference).on("click", select);
+    });
   }
 
   function destroy() {
@@ -558,6 +576,7 @@ module.exports = function Showroom() {
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;
   reveal.setOffset = setOffset;
+  reveal.refresh = refresh;
 
   Object.defineProperty(reveal, "options", { get: function get() {
       return options;
