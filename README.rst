@@ -247,6 +247,32 @@ This function can be overridden, see Configuration_.
     }
   );
 
+References
+----------
+
+References are useful if you want to open a showroom item that is referenced by more than one element on the same page.
+You just have to add the **showroom-reference** class and the **data-showroom-target-item** attribute to make the connection.
+The **data-showroom-target-item** attribute contains an id which references a showroom item on the page.
+You have to set the **data-showroom-id** by manually on the showroom item to make the connection with the reference.
+
+There is currently no interface to make the connection manually.
+But you have to call `showroom.refresh()` to refresh the references.
+
+.. code:: html
+
+  <!-- The showroom item -->
+
+  <a href="#"
+    class="showroom-item"
+    data-showroom-id="your-unique-id"
+    data-showroom-target="http://www.example.com"
+    data-showroom-title="Example">Example<a/>
+
+  <!-- The reference (a link in that case) -->
+
+  <a class="showroom-reference"
+     data-showroom-target-item="your-unique-id"></a>
+
 API
 ---
 
@@ -388,3 +414,14 @@ The method does only allow numeric values.
 .. code:: javascript
 
   showroom.setOffset(42);
+
+------------
+
+**Showroom.refresh**
+
+Refreshes the showroom references.
+
+.. code:: javascript
+
+  showroom.refresh();
+

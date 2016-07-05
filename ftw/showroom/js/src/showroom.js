@@ -20,12 +20,13 @@ module.exports = function Showroom(items = [], options) {
     displayCurrent: true,
     displayTotal: true,
     total: 0,
-    offset: 0
+    offset: 0,
+    references: Array.prototype.slice.call(document.querySelectorAll(".showroom-reference"))
   }, options);
 
   setOffset(options.offset);
 
-  var reveal = {};
+  let reveal = {};
 
   let template = Handlebars.compile(`
     <div class="{{showroom.options.cssClass}}">
@@ -60,8 +61,14 @@ module.exports = function Showroom(items = [], options) {
     throw new Error("The object set is not consistend");
   }
 
+  if(items.filter(item => item.getAttribute("data-showroom-target-item")).length) {
+    throw new Error("Showroom items must not contain references");
+  }
+
   items = items.map(item => Item(item));
   items.map(item => $(item.element).on("click", select));
+
+  options.references.map(reference => $(reference).on("click", select));
 
   let register = Register(items, { tail: options.tail, head: options.head });
   let target = $(options.target);
@@ -74,8 +81,8 @@ module.exports = function Showroom(items = [], options) {
   let isOpen = false;
 
   function checkArrows() {
-    var nextButton = $("#ftw-showroom-next", element);
-    var prevButton = $("#ftw-showroom-prev", element);
+    let nextButton = $("#ftw-showroom-next", element);
+    let prevButton = $("#ftw-showroom-prev", element);
 
     current() < options.total ? nextButton.show() : nextButton.hide();
     register.hasPrev() ? prevButton.show() : prevButton.hide();
@@ -109,7 +116,7 @@ module.exports = function Showroom(items = [], options) {
   function select(event) {
     event.preventDefault();
     let item = register.items.filter(
-      item => item.id === event.currentTarget.getAttribute("data-showroom-id")
+      item => item.id === (event.currentTarget.getAttribute("data-showroom-id") || event.currentTarget.getAttribute("data-showroom-target-item"))
     )[0];
     open(item);
   }
@@ -179,6 +186,11 @@ module.exports = function Showroom(items = [], options) {
     checkArrows();
   }
 
+  function refresh() {
+    options.references = Array.prototype.slice.call(document.querySelectorAll(".showroom-reference"));
+    options.references.map(reference => $(reference).on("click", select));
+  }
+
   function destroy() {
     element.remove();
     register.reset();
@@ -224,6 +236,7 @@ module.exports = function Showroom(items = [], options) {
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;
   reveal.setOffset = setOffset;
+  reveal.refresh = refresh;
 
   Object.defineProperty(reveal, "options", { get: () => { return options; }});
   Object.defineProperty(reveal, "current", { get: () => { return current(); }});

@@ -4,6 +4,9 @@ Changelog
 1.1.2 (unreleased)
 ------------------
 
+- Introduce showroom references
+  [Kevin Bieri]
+
 - Provide offset option for showroom.
   The offset is added to the current number and allows to display correct
   item number for batched items.
