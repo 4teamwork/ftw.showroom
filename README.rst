@@ -196,6 +196,8 @@ The showrooms provide the following options.
 +----------+--------------------------+--------------------------------------------------------------------------+
 | target   | body Element             | Define a selector where the gallery will be attached                     |
 +----------+--------------------------+--------------------------------------------------------------------------+
+| offset   | 0                        | Offset for the current item counter, useful for batches                  |
++----------+--------------------------+--------------------------------------------------------------------------+
 
 .. _fetching:
 
@@ -375,3 +377,14 @@ The method does only allow numeric values.
 .. code:: javascript
 
   showroom.setTotal(34);
+
+------------
+
+**Showroom.setOffset**
+
+Updates the offset. Prevents negative offsets.
+The method does only allow numeric values.
+
+.. code:: javascript
+
+  showroom.setOffset(42);
