@@ -28,7 +28,7 @@ module.exports = function Showroom(items = [], options) {
 
   let reveal = {};
 
-  let template = Handlebars.compile(`
+  let template = Handlebars.compile(options.template || `
     <div class="{{showroom.options.cssClass}}">
       <header class="ftw-showroom-header">
         <div class="ftw-showroom-left">
