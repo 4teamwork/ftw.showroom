@@ -6,7 +6,7 @@ module.exports = function(karma) {
     frameworks: [ "jasmine", "browserify", "chai", "fixture" ],
 
     files: [
-      { pattern: "./ftw/showroom/js/test/**/*.js" },
+      { pattern: "./ftw/showroom/js/test/**/*.js", watched: false, included: true, served: true },
       { pattern: "./ftw/showroom/js/test/fixtures/**/*.html" }
     ],
 
