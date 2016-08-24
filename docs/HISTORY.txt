@@ -4,7 +4,9 @@ Changelog
 1.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Refactor event binding using event delegation.
+  Since these changes all the showroom items must have `showroom-item` class
+  Therefore manually refreshing events is no longer necessary
 
 
 1.2.0 (2016-08-23)

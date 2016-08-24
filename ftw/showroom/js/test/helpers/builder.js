@@ -2,7 +2,7 @@ import Showroom from "showroom";
 
 export function defaultShowroom() {
   fixture.load("default_outlet.html", "default_list.html");
-  let defaultItems = fixture.el.querySelectorAll(".item");
+  let defaultItems = fixture.el.querySelectorAll(".showroom-item");
 
   return Showroom(defaultItems, {
     fetch: () => {
@@ -19,7 +19,7 @@ export function defaultShowroom() {
 
 export function singleShowroom() {
   fixture.load("default_outlet.html", "default_item.html");
-  let singleItem = fixture.el.querySelectorAll(".item");
+  let singleItem = fixture.el.querySelectorAll(".showroom-item");
 
   return Showroom(singleItem, {
     fetch: () => {

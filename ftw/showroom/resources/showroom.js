@@ -353,8 +353,7 @@ module.exports = function Showroom() {
     displayCurrent: true,
     displayTotal: true,
     total: 0,
-    offset: 0,
-    references: Array.prototype.slice.call(document.querySelectorAll(".showroom-reference"))
+    offset: 0
   }, options);
 
   setOffset(options.offset);
@@ -381,13 +380,6 @@ module.exports = function Showroom() {
   items = items.map(function (item) {
     return (0, _item2.default)(item);
   });
-  items.map(function (item) {
-    return $(item.element).on("click", select);
-  });
-
-  options.references.map(function (reference) {
-    return $(reference).on("click", select);
-  });
 
   var register = (0, _register2.default)(items, { tail: options.tail, head: options.head });
   var target = $(options.target);
@@ -411,11 +403,6 @@ module.exports = function Showroom() {
     return $.get(item.target);
   };
 
-  function bindEvents() {
-    element.on("click", "#ftw-showroom-next", throttledNext);
-    element.on("click", "#ftw-showroom-prev", throttledPrev);
-  };
-
   function render(content) {
     return $.when(content).pipe(function (content) {
       return $(template({ showroom: reveal, content: content, item: register.current }));
@@ -429,7 +416,6 @@ module.exports = function Showroom() {
       element.show();
       isOpen = true;
       target.append(element).addClass("ftw-showroom-open");
-      bindEvents();
       checkArrows();
     });
   };
@@ -483,9 +469,6 @@ module.exports = function Showroom() {
     items = items.map(function (item) {
       return (0, _item2.default)(item);
     });
-    items.map(function (item) {
-      return $(item.element).on("click", select);
-    });
     register.append(items);
     checkArrows();
   }
@@ -494,9 +477,6 @@ module.exports = function Showroom() {
     items = Array.prototype.slice.call(nodes);
     items = items.map(function (item) {
       return (0, _item2.default)(item);
-    });
-    items.map(function (item) {
-      return $(item.element).on("click", select);
     });
     if (options.offset > 0) {
       options.offset -= items.length;
@@ -514,19 +494,9 @@ module.exports = function Showroom() {
     items = items.map(function (item) {
       return (0, _item2.default)(item);
     });
-    items.map(function (item) {
-      return $(item.element).on("click", select);
-    });
     setOffset(offset);
     register.reset(items);
     checkArrows();
-  }
-
-  function refresh() {
-    options.references = Array.prototype.slice.call(document.querySelectorAll(".showroom-reference"));
-    options.references.map(function (reference) {
-      return $(reference).on("click", select);
-    });
   }
 
   function destroy() {
@@ -558,13 +528,11 @@ module.exports = function Showroom() {
     return register.pointer + 1 + options.offset;
   }
 
-  target.on("click", "#ftw-showroom-close", close);
-
-  target.on("keydown", function (e) {
+  $(document).on("click", "#ftw-showroom-close", close).on("keydown", function (e) {
     event.isEscape(e, close);
     event.isArrowRight(e, throttledNext);
     event.isArrowLeft(e, throttledPrev);
-  });
+  }).on("click", ".showroom-item", select).on("click", ".showroom-reference", select).on("click", "#ftw-showroom-prev", throttledPrev).on("click", "#ftw-showroom-next", throttledNext);
 
   reveal.open = open;
   reveal.close = close;
@@ -576,7 +544,6 @@ module.exports = function Showroom() {
   reveal.destroy = destroy;
   reveal.setTotal = setTotal;
   reveal.setOffset = setOffset;
-  reveal.refresh = refresh;
 
   Object.defineProperty(reveal, "options", { get: function get() {
       return options;
