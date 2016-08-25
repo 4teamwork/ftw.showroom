@@ -21,7 +21,7 @@ describe("Showroom", () => {
 
   beforeEach(() => {
     fixture.load("default_list.html");
-    defaultItems = fixture.el.querySelectorAll(".item");
+    defaultItems = fixture.el.querySelectorAll(".showroom-item");
   });
 
   afterEach(() => {
@@ -40,7 +40,7 @@ describe("Showroom", () => {
 
       assert.deepEqual(Array.from(showroom.items).map(
         item => item.element.className
-      ), ["item", "item", "item", "item", "item"]);
+      ), ["showroom-item", "showroom-item", "showroom-item", "showroom-item", "showroom-item"]);
     });
 
     it("should throw error when mixin DOM elements and with plain objects.", () => {
@@ -61,7 +61,7 @@ describe("Showroom", () => {
       fixture.load("dirty_item_list.html");
 
       assert.throws(() => {
-        Showroom(fixture.el.querySelectorAll(".item"));
+        Showroom(fixture.el.querySelectorAll(".showroom-item"));
       }, Error, "Showroom items must not contain references");
     });
 
@@ -455,7 +455,7 @@ describe("Showroom", () => {
 
       assert.deepEqual(
         showroom.items.map((item) => { return item.element.className }),
-        ["item", "item", "item", "item", "item", "item append", "item append", "item append", "item append", "item append"]
+        ["showroom-item", "showroom-item", "showroom-item", "showroom-item", "showroom-item", "showroom-item append", "showroom-item append", "showroom-item append", "showroom-item append", "showroom-item append"]
       )
     });
 
@@ -505,8 +505,8 @@ describe("Showroom", () => {
 
       assert.deepEqual(
         showroom.items.map((item) => { return item.element.className }),
-        [ "item prepend", "item prepend", "item prepend", "item prepend",
-          "item prepend", "item", "item", "item", "item", "item"]
+        [ "showroom-item prepend", "showroom-item prepend", "showroom-item prepend", "showroom-item prepend",
+          "showroom-item prepend", "showroom-item", "showroom-item", "showroom-item", "showroom-item", "showroom-item"]
       )
     });
 
@@ -633,7 +633,7 @@ describe("Showroom", () => {
       showroom.destroy();
 
       assert.deepEqual(
-        Array.from(fixture.el.querySelectorAll(".item")).map(item => item.dataset["showroom-id"]),
+        Array.from(fixture.el.querySelectorAll(".showroom-item")).map(item => item.dataset["showroom-id"]),
         [undefined, undefined, undefined, undefined, undefined]
       );
     });
@@ -829,7 +829,7 @@ describe("Showroom", () => {
       fixture.load("default_outlet.html", "default_list.html");
       let showroom = Showroom(defaultItems, {
         head: (current) => {
-          showroom.prepend(fixture.el.querySelectorAll(".item"));
+          showroom.prepend(fixture.el.querySelectorAll(".showroom-item"));
         },
         offset: 10,
         target: "#outlet",
@@ -877,7 +877,6 @@ describe("Showroom", () => {
       // Add this additional reference to the DOM after the first initialisation
       var ref = $('<a id="additional-reference" href="#" data-showroom-target-item="reference-2" class="showroom-reference"></a>');
       fixture.el.appendChild(ref[0]);
-      showroom.refresh();
 
       waitfor(() => {
         return fixture.el.querySelector(".ftw-showroom") &&

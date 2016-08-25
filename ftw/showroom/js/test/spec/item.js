@@ -9,7 +9,7 @@ function isUUID(uuid) {
 beforeAll(() => {
   fixture.setBase('ftw/showroom/js/test/fixtures');
   fixture.load("default_item.html");
-  defaultItem = fixture.el.querySelector(".item");
+  defaultItem = fixture.el.querySelector(".showroom-item");
 });
 
 describe("Showroom Item", () => {
