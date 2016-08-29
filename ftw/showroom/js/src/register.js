@@ -13,7 +13,8 @@ export default function Register(items = [], options) {
 
   let reveal = {};
 
-  let oberserver = Oberserver(pointer);
+  let pointerOberserver = Oberserver(pointer);
+  let itemOberserver = Oberserver();
 
   function append(pushItems = []) {
     items = $.merge(items, pushItems);
@@ -25,8 +26,8 @@ export default function Register(items = [], options) {
   }
 
   function checkPointer() {
-    oberserver.update(pointer);
-    if(oberserver.hasChanged()) {
+    pointerOberserver.update(pointer);
+    if(pointerOberserver.hasChanged() || itemOberserver.hasChanged()) {
       performCalls();
     }
   }
@@ -41,20 +42,21 @@ export default function Register(items = [], options) {
   }
 
   function next() {
-    if(pointer < reveal.size - 1) {
+    if(hasNext()) {
       pointer += 1;
     }
     checkPointer();
   }
 
   function prev() {
-    if(pointer > 0) {
+    if(hasPrev()) {
       pointer -= 1;
     }
     checkPointer();
   }
 
   function set(item) {
+    itemOberserver.update(item);
     let index = items.indexOf(item);
     if(index === -1) {
       throw new Error("Item was not found");

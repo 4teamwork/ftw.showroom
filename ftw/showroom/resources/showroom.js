@@ -212,7 +212,8 @@ function Register() {
 
   var reveal = {};
 
-  var oberserver = (0, _observer2.default)(pointer);
+  var pointerOberserver = (0, _observer2.default)(pointer);
+  var itemOberserver = (0, _observer2.default)();
 
   function append() {
     var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
@@ -228,8 +229,8 @@ function Register() {
   }
 
   function checkPointer() {
-    oberserver.update(pointer);
-    if (oberserver.hasChanged()) {
+    pointerOberserver.update(pointer);
+    if (pointerOberserver.hasChanged() || itemOberserver.hasChanged()) {
       performCalls();
     }
   }
@@ -244,20 +245,21 @@ function Register() {
   }
 
   function next() {
-    if (pointer < reveal.size - 1) {
+    if (hasNext()) {
       pointer += 1;
     }
     checkPointer();
   }
 
   function prev() {
-    if (pointer > 0) {
+    if (hasPrev()) {
       pointer -= 1;
     }
     checkPointer();
   }
 
   function set(item) {
+    itemOberserver.update(item);
     var index = items.indexOf(item);
     if (index === -1) {
       throw new Error("Item was not found");
@@ -457,7 +459,6 @@ module.exports = function Showroom() {
     register.set(item);
     observer.update(item);
     if (observer.hasChanged()) {
-      register.performCalls();
       return showItem(item);
     }
   }

@@ -136,7 +136,6 @@ module.exports = function Showroom(items = [], options) {
     register.set(item);
     observer.update(item);
     if(observer.hasChanged()) {
-      register.performCalls();
       return showItem(item);
     }
   }
