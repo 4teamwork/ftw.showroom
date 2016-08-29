@@ -259,6 +259,19 @@ describe("Register", () => {
       register.set(items[items.length - 1]);
     });
 
+    it("should call tail function just once when set to the last item", () => {
+      let items = [1, 2, 3];
+      let tailCalls = 0;
+
+      let register = Register(items, {
+        tail: () => {
+          tailCalls += 1;
+        }
+      });
+
+      register.set(items[2]);
+    });
+
   });
 
   describe("hasNext", () => {

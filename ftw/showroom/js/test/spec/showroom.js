@@ -211,6 +211,21 @@ describe("Showroom", () => {
       });
       showroom.open(showroom.items[showroom.items.length - 1]);
     });
+
+    it("should execute tail call just once when opening the last item", () => {
+      let tailCalls = 0;
+
+      let showroom = Showroom(defaultItems, {
+        tail: () => {
+          tailCalls += 1;
+        },
+        total: 10,
+      });
+
+      showroom.open(showroom.items[showroom.items.length - 1]);
+
+      assert.equal(tailCalls, 1, "Tail should only be called once when opening the last item");
+    });
   });
 
   describe("close", () => {
