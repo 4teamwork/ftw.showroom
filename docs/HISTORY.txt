@@ -1,15 +1,20 @@
 Changelog
 =========
 
-1.2.1 (unreleased)
+1.2.2 (unreleased)
 ------------------
-
-- Prevent register#set from calling tail twice
-  [Kevin Bieri]
 
 - Refactor event binding using event delegation.
   Since these changes all the showroom items must have `showroom-item` class
   Therefore manually refreshing events is no longer necessary
+  [Kevin Bieri]
+
+
+1.2.1 (2016-08-29)
+------------------
+
+- Prevent register#set from calling tail twice
+  [Kevin Bieri]
 
 
 1.2.0 (2016-08-23)
