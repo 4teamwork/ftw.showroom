@@ -28,7 +28,19 @@ module.exports = function(grunt) {
       }
     },
 
-    karma: { unit: { configFile: "karma.conf.js" } },
+    karma: {
+      options: {
+        configFile: "karma.conf.js"
+      },
+      dev: {
+        browsers: ["PhantomJS", "Chrome"]
+      },
+      ci: {
+        browsers: ["PhantomJS"],
+        autoWatch: false,
+        singleRun: true
+      }
+    },
 
     watch: {
       scripts: {
@@ -44,6 +56,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask("default", ["watch"]);
   grunt.registerTask("build", ["browserify"]);
-  grunt.registerTask("test", ["karma"]);
+  grunt.registerTask("test", ["karma:dev"]);
+  grunt.registerTask("test-ci", ["karma:ci"]);
 
 };

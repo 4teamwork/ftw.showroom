@@ -48,6 +48,50 @@ Plone 4.3
    :target: https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Plone-logo.svg/2000px-Plone-logo.svg.png
    :height: 50px
 
+JavaScript development
+======================
+
+Building
+--------
+
+Rebuilding the library (resources/javascript.js):
+
+.. code-block:: bash
+
+    grunt build
+
+Watching for changes and rebuild the bundle automatically:
+
+.. code-block:: bash
+
+    grunt watch
+
+or the default task
+
+.. code-block:: bash
+
+    grunt watch
+
+Testing
+-------
+
+Running all test:
+
+.. code-block:: bash
+
+    npm test
+
+or
+
+.. code-block:: bash
+
+    grunt test
+
+Running a specific test:
+
+.. code-block:: bash
+
+    grunt test --grep="Name of your test"
 
 Links
 -----
