@@ -12,6 +12,8 @@ module.exports = function(karma) {
 
     reporters: [ "dots" ],
 
+    colors: true,
+
     preprocessors: {
       "./ftw/showroom/js/test/**/*.js": "browserify",
       "./ftw/showroom/js/test/fixtures/**/*.html": "html2js"
