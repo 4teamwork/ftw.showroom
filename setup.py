@@ -50,6 +50,7 @@ setup(name='ftw.showroom',
       install_requires=[
           'Plone',
           'setuptools',
+          'ftw.upgrade',
           ],
 
       tests_require=tests_require,
