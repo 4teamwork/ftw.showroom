@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.showroom = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.ftw || (g.ftw = {})).showroom = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -32,7 +32,7 @@ var keyup = $.Event("keyup");
 var keydown = $.Event("keydown");
 
 function isEnter(e) {
-  var callback = arguments.length <= 1 || arguments[1] === undefined ? _utils.noop : arguments[1];
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
 
   if (e.keyCode === keycode.enter) {
     callback();
@@ -42,14 +42,14 @@ function isEnter(e) {
 }
 
 function hitEnter() {
-  var element = arguments.length <= 0 || arguments[0] === undefined ? defaultElement : arguments[0];
+  var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultElement;
 
   keydown.keyCode = keycode.enter;
   $(element).trigger(keydown);
 }
 
 function isEscape(e) {
-  var callback = arguments.length <= 1 || arguments[1] === undefined ? _utils.noop : arguments[1];
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
 
   if (e.keyCode === keycode.escape) {
     callback();
@@ -59,14 +59,14 @@ function isEscape(e) {
 }
 
 function hitEscape() {
-  var element = arguments.length <= 0 || arguments[0] === undefined ? defaultElement : arguments[0];
+  var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultElement;
 
   keydown.keyCode = keycode.escape;
   $(element).trigger(keydown);
 }
 
 function isArrowLeft(e) {
-  var callback = arguments.length <= 1 || arguments[1] === undefined ? _utils.noop : arguments[1];
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
 
   if (e.keyCode === keycode.arrowLeft) {
     callback();
@@ -76,14 +76,14 @@ function isArrowLeft(e) {
 }
 
 function hitArrowLeft() {
-  var element = arguments.length <= 0 || arguments[0] === undefined ? defaultElement : arguments[0];
+  var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultElement;
 
   keydown.keyCode = keycode.arrowLeft;
   $(element).trigger(keydown);
 }
 
 function isArrowRight(e) {
-  var callback = arguments.length <= 1 || arguments[1] === undefined ? _utils.noop : arguments[1];
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
 
   if (e.keyCode === keycode.arrowRight) {
     callback();
@@ -93,224 +93,19 @@ function isArrowRight(e) {
 }
 
 function hitArrowRight() {
-  var element = arguments.length <= 0 || arguments[0] === undefined ? defaultElement : arguments[0];
+  var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultElement;
 
   keydown.keyCode = keycode.arrowRight;
   $(element).trigger(keydown);
 }
 
 function click() {
-  var element = arguments.length <= 0 || arguments[0] === undefined ? defaultElement : arguments[0];
+  var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultElement;
   $(element).click();
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./utils":6}],2:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = Item;
-
-var _utils = require("./utils");
-
-function Item(element) {
-
-  var reveal = {};
-  var showroomId = element.getAttribute("data-showroom-id") || (0, _utils.generateUUID)();
-
-  element.setAttribute("data-showroom-id", showroomId);
-
-  function destroy() {
-    element.removeAttribute("data-showroom-id");
-  }
-
-  return Object.freeze({
-    id: showroomId,
-    element: element,
-    target: element.getAttribute("data-showroom-target") || "",
-    title: element.getAttribute("data-showroom-title") || "",
-    destroy: destroy
-  });
-}
-
-},{"./utils":6}],3:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = Oberserver;
-function Oberserver(initialValue) {
-
-  var value = initialValue;
-  var changed = false;
-  var reveal = {};
-
-  function update(newValue) {
-    if (newValue === value) {
-      changed = false;
-    } else {
-      changed = true;
-    }
-    value = newValue;
-  }
-
-  function hasChanged() {
-    return changed;
-  }
-
-  function reset() {
-    changed = false;
-    value = undefined;
-  }
-
-  Object.defineProperty(reveal, "value", {
-    get: function get() {
-      return value;
-    }
-  });
-
-  reveal.update = update;
-  reveal.hasChanged = hasChanged;
-  reveal.reset = reset;
-
-  return Object.freeze(reveal);
-}
-
-},{}],4:[function(require,module,exports){
-(function (global){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = Register;
-
-var _utils = require("./utils");
-
-var _observer = require("./observer");
-
-var _observer2 = _interopRequireDefault(_observer);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
-
-function Register() {
-  var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-  var options = arguments[1];
-
-
-  options = $.extend({
-    head: _utils.noop,
-    tail: _utils.noop
-  }, options);
-
-  var pointer = 0;
-
-  var reveal = {};
-
-  var pointerOberserver = (0, _observer2.default)(pointer);
-  var itemOberserver = (0, _observer2.default)();
-
-  function append() {
-    var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-
-    items = $.merge(items, pushItems);
-  }
-
-  function prepend() {
-    var pushItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-
-    pointer += pushItems.length;
-    items = $.merge(pushItems, items);
-  }
-
-  function checkPointer() {
-    pointerOberserver.update(pointer);
-    if (pointerOberserver.hasChanged() || itemOberserver.hasChanged()) {
-      performCalls();
-    }
-  }
-
-  function performCalls() {
-    if (pointer === 0) {
-      options.head(reveal.current);
-    }
-    if (pointer === reveal.size - 1) {
-      options.tail(reveal.current);
-    }
-  }
-
-  function next() {
-    if (hasNext()) {
-      pointer += 1;
-    }
-    checkPointer();
-  }
-
-  function prev() {
-    if (hasPrev()) {
-      pointer -= 1;
-    }
-    checkPointer();
-  }
-
-  function set(item) {
-    itemOberserver.update(item);
-    var index = items.indexOf(item);
-    if (index === -1) {
-      throw new Error("Item was not found");
-    } else {
-      pointer = index;
-    }
-    checkPointer();
-  }
-
-  function reset() {
-    var resetItems = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-
-    items = resetItems;
-    pointer = 0;
-  }
-
-  function hasNext() {
-    return pointer < items.length - 1;
-  }
-
-  function hasPrev() {
-    return pointer > 0;
-  }
-
-  Object.defineProperty(reveal, "current", { get: function get() {
-      return items[pointer];
-    } });
-  Object.defineProperty(reveal, "size", { get: function get() {
-      return items.length;
-    } });
-  Object.defineProperty(reveal, "items", { get: function get() {
-      return items;
-    } });
-  Object.defineProperty(reveal, "pointer", { get: function get() {
-      return pointer;
-    } });
-  reveal.hasNext = hasNext;
-  reveal.hasPrev = hasPrev;
-  reveal.next = next;
-  reveal.prev = prev;
-  reveal.prepend = prepend;
-  reveal.append = append;
-  reveal.set = set;
-  reveal.reset = reset;
-  reveal.performCalls = performCalls;
-
-  return Object.freeze(reveal);
-}
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./observer":3,"./utils":6}],5:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -340,7 +135,7 @@ var Handlebars = (typeof window !== "undefined" ? window['Handlebars'] : typeof 
 var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
 
 module.exports = function Showroom() {
-  var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+  var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var options = arguments[1];
 
 
@@ -487,8 +282,8 @@ module.exports = function Showroom() {
   }
 
   function reset() {
-    var items = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-    var offset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+    var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
     close();
     items = Array.prototype.slice.call(items);
@@ -563,7 +358,212 @@ module.exports = function Showroom() {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./event":1,"./item":2,"./observer":3,"./register":4,"./utils":6}],6:[function(require,module,exports){
+},{"./event":1,"./item":3,"./observer":4,"./register":5,"./utils":6}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Item;
+
+var _utils = require("./utils");
+
+function Item(element) {
+
+  var reveal = {};
+  var showroomId = element.getAttribute("data-showroom-id") || (0, _utils.generateUUID)();
+
+  element.setAttribute("data-showroom-id", showroomId);
+
+  function destroy() {
+    element.removeAttribute("data-showroom-id");
+  }
+
+  return Object.freeze({
+    id: showroomId,
+    element: element,
+    target: element.getAttribute("data-showroom-target") || "",
+    title: element.getAttribute("data-showroom-title") || "",
+    destroy: destroy
+  });
+}
+
+},{"./utils":6}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Oberserver;
+function Oberserver(initialValue) {
+
+  var value = initialValue;
+  var changed = false;
+  var reveal = {};
+
+  function update(newValue) {
+    if (newValue === value) {
+      changed = false;
+    } else {
+      changed = true;
+    }
+    value = newValue;
+  }
+
+  function hasChanged() {
+    return changed;
+  }
+
+  function reset() {
+    changed = false;
+    value = undefined;
+  }
+
+  Object.defineProperty(reveal, "value", {
+    get: function get() {
+      return value;
+    }
+  });
+
+  reveal.update = update;
+  reveal.hasChanged = hasChanged;
+  reveal.reset = reset;
+
+  return Object.freeze(reveal);
+}
+
+},{}],5:[function(require,module,exports){
+(function (global){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Register;
+
+var _utils = require("./utils");
+
+var _observer = require("./observer");
+
+var _observer2 = _interopRequireDefault(_observer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var $ = (typeof window !== "undefined" ? window['jQuery'] : typeof global !== "undefined" ? global['jQuery'] : null);
+
+function Register() {
+  var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var options = arguments[1];
+
+
+  options = $.extend({
+    head: _utils.noop,
+    tail: _utils.noop
+  }, options);
+
+  var pointer = 0;
+
+  var reveal = {};
+
+  var pointerOberserver = (0, _observer2.default)(pointer);
+  var itemOberserver = (0, _observer2.default)();
+
+  function append() {
+    var pushItems = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+    items = $.merge(items, pushItems);
+  }
+
+  function prepend() {
+    var pushItems = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+    pointer += pushItems.length;
+    items = $.merge(pushItems, items);
+  }
+
+  function checkPointer() {
+    pointerOberserver.update(pointer);
+    if (pointerOberserver.hasChanged() || itemOberserver.hasChanged()) {
+      performCalls();
+    }
+  }
+
+  function performCalls() {
+    if (pointer === 0) {
+      options.head(reveal.current);
+    }
+    if (pointer === reveal.size - 1) {
+      options.tail(reveal.current);
+    }
+  }
+
+  function next() {
+    if (hasNext()) {
+      pointer += 1;
+    }
+    checkPointer();
+  }
+
+  function prev() {
+    if (hasPrev()) {
+      pointer -= 1;
+    }
+    checkPointer();
+  }
+
+  function set(item) {
+    itemOberserver.update(item);
+    var index = items.indexOf(item);
+    if (index === -1) {
+      throw new Error("Item was not found");
+    } else {
+      pointer = index;
+    }
+    checkPointer();
+  }
+
+  function reset() {
+    var resetItems = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+    items = resetItems;
+    pointer = 0;
+  }
+
+  function hasNext() {
+    return pointer < items.length - 1;
+  }
+
+  function hasPrev() {
+    return pointer > 0;
+  }
+
+  Object.defineProperty(reveal, "current", { get: function get() {
+      return items[pointer];
+    } });
+  Object.defineProperty(reveal, "size", { get: function get() {
+      return items.length;
+    } });
+  Object.defineProperty(reveal, "items", { get: function get() {
+      return items;
+    } });
+  Object.defineProperty(reveal, "pointer", { get: function get() {
+      return pointer;
+    } });
+  reveal.hasNext = hasNext;
+  reveal.hasPrev = hasPrev;
+  reveal.next = next;
+  reveal.prev = prev;
+  reveal.prepend = prepend;
+  reveal.append = append;
+  reveal.set = set;
+  reveal.reset = reset;
+  reveal.performCalls = performCalls;
+
+  return Object.freeze(reveal);
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./observer":4,"./utils":6}],6:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -600,9 +600,9 @@ function now() {
 
 // Inspired by http://underscorejs.org/#throttle
 function throttle() {
-  var func = arguments.length <= 0 || arguments[0] === undefined ? function () {} : arguments[0];
-  var wait = arguments.length <= 1 || arguments[1] === undefined ? 250 : arguments[1];
-  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+  var func = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+  var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 250;
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   var timeout = void 0;
   var result = void 0;
@@ -649,5 +649,5 @@ function isNumeric(n) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[5])(5)
+},{}]},{},[2])(2)
 });

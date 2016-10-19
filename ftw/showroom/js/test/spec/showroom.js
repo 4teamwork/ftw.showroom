@@ -1,4 +1,4 @@
-import Showroom from "showroom";
+import Showroom from "ftw.showroom";
 import waitfor from "../helpers/waitfor";
 import * as Builder from "../helpers/builder";
 import * as event from "event";
