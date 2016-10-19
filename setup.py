@@ -8,9 +8,10 @@ maintainer = 'Kevin Bieri'
 
 tests_require = [
     'ftw.builder',
-    'plone.app.testing',
+    'ftw.testing',
     'ftw.testbrowser',
-    'unittest2',
+    'plone.app.testing',
+    'plone.testing',
     ]
 
 extras_require = {
