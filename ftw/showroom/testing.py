@@ -5,6 +5,7 @@ from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
+from plone.testing import z2
 from zope.configuration import xmlconfig
 
 
@@ -20,6 +21,8 @@ class ShowroomLayer(PloneSandboxLayer):
             '  <includePluginsOverrides package="plone" />'
             '</configure>',
             context=configurationContext)
+
+        z2.installProduct(app, 'ftw.showroom')
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'ftw.showroom:default')

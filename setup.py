@@ -8,9 +8,10 @@ maintainer = 'Kevin Bieri'
 
 tests_require = [
     'ftw.builder',
-    'plone.app.testing',
+    'ftw.testing',
     'ftw.testbrowser',
-    'unittest2',
+    'plone.app.testing',
+    'plone.testing',
     ]
 
 extras_require = {
@@ -50,6 +51,7 @@ setup(name='ftw.showroom',
       install_requires=[
           'Plone',
           'setuptools',
+          'ftw.upgrade',
           ],
 
       tests_require=tests_require,

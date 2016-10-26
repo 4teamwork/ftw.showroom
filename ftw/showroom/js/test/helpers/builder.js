@@ -1,4 +1,4 @@
-import Showroom from "showroom";
+import Showroom from "ftw.showroom";
 
 export function defaultShowroom() {
   fixture.load("default_outlet.html", "default_list.html");

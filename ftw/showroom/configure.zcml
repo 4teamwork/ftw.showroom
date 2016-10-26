@@ -1,7 +1,13 @@
 <configure
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:upgrade-step="http://namespaces.zope.org/ftw.upgrade"
     i18n_domain="ftw.showroom">
+
+    <five:registerPackage package="." initialize=".initialize" />
+
+    <include package="ftw.upgrade" file="meta.zcml" />
 
     <genericsetup:registerProfile
         name="default"
@@ -9,6 +15,18 @@
         directory="profiles/default"
         description="Installs the ftw.showroom package"
         provides="Products.GenericSetup.interfaces.EXTENSION"
+        />
+
+    <genericsetup:registerProfile
+        name="uninstall"
+        title="ftw.showroom uninstall"
+        directory="profiles/uninstall"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        />
+
+    <upgrade-step:directory
+        profile="ftw.showroom:default"
+        directory="./upgrades"
         />
 
     <browser:resourceDirectory
