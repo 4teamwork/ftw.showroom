@@ -13,8 +13,8 @@ export default function Register(items = [], options) {
 
   let reveal = {};
 
-  let pointerOberserver = Oberserver(pointer);
-  let itemOberserver = Oberserver();
+  const pointerOberserver = Oberserver(pointer);
+  const itemOberserver = Oberserver();
 
   function append(pushItems = []) {
     items = $.merge(items, pushItems);
@@ -56,7 +56,7 @@ export default function Register(items = [], options) {
   }
 
   function set(item) {
-    itemOberserver.update(item);
+    itemOberserver.update(item.id);
     let index = items.indexOf(item);
     if(index === -1) {
       throw new Error("Item was not found");

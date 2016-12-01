@@ -8,8 +8,8 @@ export function defaultShowroom() {
     fetch: () => {
       return `
         <div id='content'>content</div>
-        <button id='ftw-showroom-next'></button>
-        <button id='ftw-showroom-prev'></button>
+        <button class='ftw-showroom-next'></button>
+        <button class='ftw-showroom-prev'></button>
       `;
     },
     target: "#outlet",
@@ -25,12 +25,37 @@ export function singleShowroom() {
     fetch: () => {
       return `
         <div id='content'>content</div>
-        <button id='ftw-showroom-next'></button>
-        <button id='ftw-showroom-prev'></button>
+        <button class='ftw-showroom-next'></button>
+        <button class='ftw-showroom-prev'></button>
       `;
     },
     target: "#outlet"
   });
+}
+
+export function multipleShowroom() {
+  fixture.load("default_outlet.html", "multiple_list.html");
+  const group1 = fixture.el.querySelectorAll(".group1.showroom-item");
+  const group2 = fixture.el.querySelectorAll(".group2.showroom-item");
+
+  const fetch = () => {
+    return `
+      <div class='content'>content</div>
+      <button class='ftw-showroom-next'></button>
+      <button class='ftw-showroom-prev'></button>
+    `;
+  }
+
+  return [
+    Showroom(group1, {
+      fetch,
+      target: "#outlet"
+    }),
+    Showroom(group2, {
+      fetch,
+      target: "#outlet"
+    })
+  ]
 }
 
 export function referenceShowroom() {
@@ -41,8 +66,8 @@ export function referenceShowroom() {
     fetch: () => {
       return `
         <div id='content'>content</div>
-        <button id='ftw-showroom-next'></button>
-        <button id='ftw-showroom-prev'></button>
+        <button class='ftw-showroom-next'></button>
+        <button class='ftw-showroom-prev'></button>
       `;
     },
     target: "#outlet"

@@ -1,11 +1,11 @@
-export default function Oberserver(initialValue) {
+const $ = require("jquery");
 
-  let value = initialValue;
+export default function Observer(value) {
+
   let changed = false;
-  let reveal = {};
 
   function update(newValue) {
-    if(newValue === value) {
+    if(value === newValue) {
       changed = false;
     } else {
       changed = true;
@@ -20,13 +20,15 @@ export default function Oberserver(initialValue) {
     value = undefined;
   }
 
+  let reveal = {
+    update,
+    hasChanged,
+    reset
+  }
+
   Object.defineProperty(reveal, "value", {
     get: () => { return value; }
   });
-
-  reveal.update = update;
-  reveal.hasChanged = hasChanged;
-  reveal.reset = reset;
 
   return Object.freeze(reveal);
 

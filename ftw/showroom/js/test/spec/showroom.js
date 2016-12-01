@@ -9,6 +9,8 @@ let $ = require("jquery");
 
 let defaultItems;
 
+let showroom;
+
 function isUUID(uuid) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
 }
@@ -25,18 +27,19 @@ describe("Showroom", () => {
   });
 
   afterEach(() => {
-    fixture.cleanup()
+    fixture.cleanup();
+    if(showroom) { showroom.destroy(); }
   });
 
   describe("Initialisation", () => {
 
     it("should have empty list as default items.", () => {
-      let showroom = Showroom();
+      showroom = Showroom();
       assert.deepEqual(showroom.items, []);
     });
 
     it("should accept list of DOM elements for initialisation.", () => {
-      let showroom = Showroom(defaultItems);
+      showroom = Showroom(defaultItems);
 
       assert.deepEqual(Array.from(showroom.items).map(
         item => item.element.className
@@ -66,7 +69,7 @@ describe("Showroom", () => {
     });
 
     it("should extend items with showroom id.", () => {
-      let showroom = Showroom(defaultItems);
+      showroom = Showroom(defaultItems);
 
       assert.deepEqual(
         Array.from(showroom.items).map(
@@ -76,7 +79,7 @@ describe("Showroom", () => {
     });
 
     it("should not accept negative offset", () => {
-      let showroom = Showroom(defaultItems, {offset: -3});
+      showroom = Showroom(defaultItems, {offset: -3});
       assert.equal(showroom.options.offset, 0);
     })
 
@@ -85,7 +88,7 @@ describe("Showroom", () => {
   describe("options", () => {
 
     it("should have default values.", () => {
-      let showroom = Showroom(defaultItems);
+      showroom = Showroom(defaultItems);
 
       assert.equal(showroom.options.cssClass, "ftw-showroom");
       assert.equal(showroom.options.total, 0);
@@ -94,7 +97,7 @@ describe("Showroom", () => {
 
     it("displayOptions", () => {
       fixture.load("default_outlet.html");
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         target: "#outlet",
         displayTotal: false,
         displayCurrent: false,
@@ -113,7 +116,7 @@ describe("Showroom", () => {
   describe("total", () => {
 
     it("should be configurable", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       assert.equal(showroom.options.total, 10);
       assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
@@ -121,7 +124,7 @@ describe("Showroom", () => {
 
     it("should render no total if not defined", () => {
       fixture.load("default_outlet.html");
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         target: "#outlet",
         fetch: () => {
           return "<div id='content'>content</div>";
@@ -137,7 +140,7 @@ describe("Showroom", () => {
 
   describe("setTotal", () => {
     it("should be updated after a reset", (done) => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open().done(() => {
         assert.equal(fixture.el.querySelector("#outlet .ftw-showroom-total").innerHTML, "10");
         showroom.setTotal(20).done(() => {
@@ -148,12 +151,12 @@ describe("Showroom", () => {
     });
 
     it("should throw an error when no numberic type has been set", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       assert.throw(() => { showroom.setTotal("peter"); }, Error, "peter is not a number");
     });
 
     it("should not open an item if no item is already opened", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.setTotal(20);
       assert.isNull(fixture.el.querySelector(".ftw-showroom"));
     });
@@ -162,7 +165,7 @@ describe("Showroom", () => {
   describe("open", () => {
 
     it("should attach a selected element to the target", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open(showroom.items[1]);
 
@@ -174,7 +177,7 @@ describe("Showroom", () => {
     });
 
     it("should mark the target with a class when open", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -182,7 +185,7 @@ describe("Showroom", () => {
     });
 
     it("should attach a default element to the target", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -193,7 +196,7 @@ describe("Showroom", () => {
     });
 
     it("should execute head call when opened on first item of batch", (done) => {
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         head: (current) => {
           done();
         },
@@ -203,7 +206,7 @@ describe("Showroom", () => {
     });
 
     it("should execute tail call when opened on last item of batch", (done) => {
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         tail: (current) => {
           done();
         },
@@ -215,7 +218,7 @@ describe("Showroom", () => {
     it("should execute tail call just once when opening the last item", () => {
       let tailCalls = 0;
 
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         tail: () => {
           tailCalls += 1;
         },
@@ -231,7 +234,7 @@ describe("Showroom", () => {
   describe("close", () => {
 
     it("should hide the target element", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
       assert.equal(fixture.el.querySelector(".ftw-showroom").style.display, "block");
@@ -241,7 +244,7 @@ describe("Showroom", () => {
     });
 
     it("should the marker class", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
       showroom.close();
@@ -250,7 +253,7 @@ describe("Showroom", () => {
     });
 
     it("should be triggered when hitting ESC key", (done) => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
 
       waitfor(() => {
@@ -261,7 +264,7 @@ describe("Showroom", () => {
     });
 
     it("should be possible to reopen the closed item", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.close();
       showroom.open();
@@ -273,7 +276,7 @@ describe("Showroom", () => {
   describe("next", () => {
 
     it("should render the next item", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
 
@@ -288,7 +291,7 @@ describe("Showroom", () => {
       fixture.load("default_outlet.html");
 
       let renderCalls = 0;
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => { return "<div></div>" },
         render: () => { renderCalls += 1 }
       });
@@ -304,7 +307,7 @@ describe("Showroom", () => {
     });
 
     it("should remove the previous item from the DOM", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
 
@@ -320,7 +323,7 @@ describe("Showroom", () => {
     });
 
     it("should stay on the current item when reaching the end", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
       showroom.next();
@@ -332,7 +335,7 @@ describe("Showroom", () => {
     });
 
     it("should show the next item when hitting the next button", (done) => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -343,11 +346,11 @@ describe("Showroom", () => {
         done();
       });
 
-      event.click(fixture.el.querySelector("#ftw-showroom-next"));
+      event.click(fixture.el.querySelector(".ftw-showroom-next"));
     });
 
     it("should show the next item when hitting the right arrow key", (done) => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
 
@@ -366,7 +369,7 @@ describe("Showroom", () => {
   describe("prev", () => {
 
     it("should render the previous item", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
       showroom.prev();
@@ -381,7 +384,7 @@ describe("Showroom", () => {
     });
 
     it("sould remove the previous item from the DOM", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
 
@@ -397,7 +400,7 @@ describe("Showroom", () => {
     });
 
     it("sould stay on the current item when reaching the start", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.prev();
       showroom.prev();
@@ -406,7 +409,7 @@ describe("Showroom", () => {
     });
 
     it("sould show the previous item when hitting the prev button", (done) => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
       showroom.next();
@@ -420,11 +423,11 @@ describe("Showroom", () => {
         done();
       });
 
-      event.click(fixture.el.querySelector("#ftw-showroom-prev"));
+      event.click(fixture.el.querySelector(".ftw-showroom-prev"));
     });
 
     it("sould show the previous item when hitting the left arrow key", (done) => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.open();
       showroom.next();
@@ -446,7 +449,7 @@ describe("Showroom", () => {
       fixture.load("default_outlet.html");
 
       let renderCalls = 0;
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => { return "<div></div>" },
         render: () => { renderCalls += 1; return $("<div></div>") }
       });
@@ -465,7 +468,7 @@ describe("Showroom", () => {
     it("should extend the current item set", () => {
       fixture.load("append_list.html");
       let newItems = fixture.el.querySelectorAll(".append");
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.append(newItems);
 
       assert.deepEqual(
@@ -478,7 +481,7 @@ describe("Showroom", () => {
       fixture.load("append_list.html", "default_outlet.html");
       let newItems = fixture.el.querySelectorAll(".append");
 
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => {
           return `
             <div id='content'>content</div>
@@ -515,7 +518,7 @@ describe("Showroom", () => {
     it("should extend the current item list at the top", () => {
       fixture.load("prepend_list.html");
       let newItems = fixture.el.querySelectorAll(".prepend");
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.prepend(newItems);
 
       assert.deepEqual(
@@ -529,7 +532,7 @@ describe("Showroom", () => {
       fixture.load("prepend_list.html", "default_outlet.html");
       let newItems = fixture.el.querySelectorAll(".prepend");
 
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => {
           return `
             <div id='content'>content</div>
@@ -566,7 +569,7 @@ describe("Showroom", () => {
       fixture.load("default_outlet.html");
 
       let renderCalls = 0;
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => { return "<div></div>" },
         render: () => { renderCalls += 1 }
       });
@@ -586,7 +589,7 @@ describe("Showroom", () => {
       fixture.load("default_outlet.html");
 
       let renderCalls = 0;
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => {
           return `
             <div id='content'>content</div>
@@ -599,9 +602,9 @@ describe("Showroom", () => {
 
       showroom.open();
 
-      event.click(fixture.el.querySelector("#ftw-showroom-next"));
+      event.click(fixture.el.querySelector(".ftw-showroom-next"));
       setTimeout(() => {
-        event.click(fixture.el.querySelector("#ftw-showroom-next"));
+        event.click(fixture.el.querySelector(".ftw-showroom-next"));
         assert.equal(renderCalls, 1, "The render method should have been called only one within 1000ms");
         done();
       }, 10);
@@ -612,7 +615,7 @@ describe("Showroom", () => {
   describe("destroy", () => {
 
     it("should reset the element to an empty jQuery object", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.destroy();
 
@@ -620,7 +623,7 @@ describe("Showroom", () => {
     });
 
     it("should remove the nodes from the DOM", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.destroy();
 
@@ -628,14 +631,14 @@ describe("Showroom", () => {
     });
 
     it("should clear the items store", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.destroy();
 
       assert.deepEqual(showroom.items, []);
     });
 
     it("should remove the showroom-open class on the target", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.destroy();
 
@@ -643,7 +646,7 @@ describe("Showroom", () => {
     });
 
     it("should remove the showroom-id data attribute in the DOM", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.destroy();
 
@@ -654,7 +657,7 @@ describe("Showroom", () => {
     });
 
     it("should not be possible to reopen the showroom after a destruction", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.destroy();
     });
@@ -664,7 +667,7 @@ describe("Showroom", () => {
   describe("reset", () => {
 
     it("should empty the items store with no arguments", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.reset();
 
@@ -675,7 +678,7 @@ describe("Showroom", () => {
       fixture.load("append_list.html", "default_outlet.html");
       let newItems = fixture.el.querySelectorAll(".append");
 
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => {
           return `
             <div id='content'>content</div>
@@ -698,7 +701,7 @@ describe("Showroom", () => {
       fixture.load("append_list.html", "default_outlet.html");
       let newItems = fixture.el.querySelectorAll(".append");
 
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         fetch: () => {
           return `
             <div id='content'>content</div>
@@ -719,7 +722,7 @@ describe("Showroom", () => {
     });
 
     it("should reset showroom offset", () => {
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         offset: 10,
         total: 20,
         target: "#outlet"
@@ -737,61 +740,61 @@ describe("Showroom", () => {
 
     it("should not show any arrows if there is only one item in the stream", () => {
 
-      let showroom = Builder.singleShowroom();
+      showroom = Builder.singleShowroom();
       showroom.open();
 
-      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "none");
-      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "none");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-next").style.display, "none");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-prev").style.display, "none");
 
     });
 
     it("should not show prev arrow at the start of the stream", () => {
 
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
 
-      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
-      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "none");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-prev").style.display, "none");
 
     });
 
     it("should not show next arrows at the end the stream", () => {
 
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.setTotal(5);
       showroom.open(showroom.items[4]);
 
-      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "none");
-      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-next").style.display, "none");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-prev").style.display, "");
     });
 
     it("should show next arrow when leaving the last item", () => {
 
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open(showroom.items[4]);
       showroom.prev();
 
-      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
-      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-prev").style.display, "");
     });
 
     it("should show prev arrow when leaving the first item", () => {
 
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.open();
       showroom.next();
 
-      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
-      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-prev").style.display, "");
     });
 
     it("should show next arrow even when the manually set total is greather than the actual batch", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
       showroom.setTotal(10);
       showroom.open(showroom.items[4]);
 
-      assert.equal(fixture.el.querySelector("#ftw-showroom-next").style.display, "");
-      assert.equal(fixture.el.querySelector("#ftw-showroom-prev").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-next").style.display, "");
+      assert.equal(fixture.el.querySelector(".ftw-showroom-prev").style.display, "");
     });
 
   });
@@ -799,7 +802,7 @@ describe("Showroom", () => {
   describe("offset", () => {
 
     it("should be configurable", () => {
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         offset: 13,
       });
       showroom.open();
@@ -807,7 +810,7 @@ describe("Showroom", () => {
     });
 
     it("must not be negative", () => {
-      let showroom = Builder.defaultShowroom();
+      showroom = Builder.defaultShowroom();
 
       showroom.setOffset(-77);
       assert.equal(showroom.options.offset, 0);
@@ -815,7 +818,7 @@ describe("Showroom", () => {
 
     it("should shift the current index by value given in the options", () => {
       fixture.load("default_outlet.html");
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         offset: 10,
         total: 20,
         target: "#outlet",
@@ -828,7 +831,7 @@ describe("Showroom", () => {
 
     it("should respect offset when calling next", () => {
       fixture.load("default_outlet.html");
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         offset: 10,
         total: 20,
         target: "#outlet",
@@ -842,7 +845,7 @@ describe("Showroom", () => {
 
     it("should respect offset when calling prev", () => {
       fixture.load("default_outlet.html", "default_list.html");
-      let showroom = Showroom(defaultItems, {
+      showroom = Showroom(defaultItems, {
         head: (current) => {
           showroom.prepend(fixture.el.querySelectorAll(".showroom-item"));
         },
@@ -861,7 +864,7 @@ describe("Showroom", () => {
 
   describe("reference", () => {
     it("should respect predefined id on a showroom item", () => {
-      let showroom = Builder.referenceShowroom();
+      showroom = Builder.referenceShowroom();
       showroom.open();
 
       assert.equal(fixture.el.querySelector(".showroom-item").dataset.showroomId, "reference-1");
@@ -873,7 +876,7 @@ describe("Showroom", () => {
     });
 
     it("should be able to open the referenced item", (done) => {
-      let showroom = Builder.referenceShowroom();
+      showroom = Builder.referenceShowroom();
 
       waitfor(() => {
         return fixture.el.querySelector(".ftw-showroom") &&
@@ -887,7 +890,7 @@ describe("Showroom", () => {
     });
 
     it("should refresh newly added references", (done) => {
-      let showroom = Builder.referenceShowroom();
+      showroom = Builder.referenceShowroom();
 
       // Add this additional reference to the DOM after the first initialisation
       var ref = $('<a id="additional-reference" href="#" data-showroom-target-item="reference-2" class="showroom-reference"></a>');
@@ -904,6 +907,71 @@ describe("Showroom", () => {
       event.click(fixture.el.querySelector("#additional-reference"));
     });
 
+  });
+
+  describe("multiple instances", () => {
+    it("should contain multiple showroom elements in the document", () => {
+      const [ showroom1, showroom2 ] = Builder.multipleShowroom();
+
+      showroom1.open();
+      showroom2.open();
+
+      assert.equal(fixture.el.querySelectorAll(".ftw-showroom").length, 2, "There should be two showroom instances in the DOM");
+    });
+
+    it("should not be possible to have multiple showrooms open", () => {
+      const [showroom1, showroom2] = Builder.multipleShowroom();
+      showroom1.open();
+      showroom2.open();
+
+      assert.deepEqual(Array.from(fixture.el.querySelectorAll(".ftw-showroom")).map(el => el.style.display),
+                      ["none", "block"]);
+    });
+
+    it("should be possible to cycle through slides using arrow keys", (done) => {
+      const [showroom] = Builder.multipleShowroom();
+
+      showroom.open();
+
+      waitfor(() => {
+        return showroom.element[0].querySelector(".ftw-showroom-current").innerHTML === "2";
+      }, () => {
+        assert.equal(showroom.element[0].querySelector(".ftw-showroom-current").innerHTML, "2");
+        done();
+      });
+
+      event.hitArrowRight(fixture.el.querySelector("#outlet"));
+    });
+
+    it("should close the currently open showroom when pressing escape button on keyboard", (done) => {
+      const [showroom1, showroom2] = Builder.multipleShowroom();
+
+      showroom1.open();
+      showroom2.open();
+
+      assert.isFalse(showroom1.isOpen);
+      assert.isTrue(showroom2.isOpen);
+
+      waitfor(() => {
+        return !showroom2.isOpen;
+      }, () => {
+        assert.isFalse(showroom1.isOpen);
+        assert.isFalse(showroom2.isOpen);
+        done();
+      });
+
+      event.hitEscape(fixture.el.querySelector("#outlet"));
+    });
+
+    it("should open the correct showroom when clicking on a showroom item", (done) => {
+      const [showroom1, showroom2] = Builder.multipleShowroom();
+      waitfor(() => showroom1.isOpen, () => {
+        assert.isTrue(showroom1.isOpen);
+        assert.isFalse(showroom2.isOpen);
+        done();
+      });
+      event.click(fixture.el.querySelectorAll(".group1.showroom-item")[3]);
+    });
   });
 
 });

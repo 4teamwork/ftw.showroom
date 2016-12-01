@@ -61,3 +61,11 @@ export function throttle(func = function() {}, wait = 250, options = {}) {
 export function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 };
+
+export function remove(array, element) {
+  const index = array.indexOf(element);
+  if(index >= 0) {
+    array.splice(index, 1);
+  }
+  return array;
+}

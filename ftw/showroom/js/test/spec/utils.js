@@ -1,4 +1,4 @@
-import { isNumeric, throttle, noop, uuid, isHTMLElement } from "utils"
+import { isNumeric, throttle, noop, uuid, isHTMLElement, remove as removeFromArray } from "utils"
 
 describe("Utils", () => {
 
@@ -78,6 +78,18 @@ describe("Utils", () => {
       assert.isFalse(isNumeric(NaN));
     });
 
+  });
+
+  describe("removeFromArray", () => {
+    it("should remove a specific element from an array", () => {
+      let array = [1, 2, 3, 4];
+      assert.deepEqual(removeFromArray(array, 2), [1, 3, 4])
+    });
+
+    it("should do leave the array when the element could not be found", () => {
+      let array = [1, 2, 3, 4];
+      assert.deepEqual(removeFromArray(array, "s"), [1, 2, 3, 4])
+    });
   });
 
 });
