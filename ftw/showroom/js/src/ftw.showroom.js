@@ -3,9 +3,12 @@ import Item from "./item";
 import Observer from "./observer";
 import Register from "./register";
 import * as event from "./event";
+import Gallery from "./gallery";
 
-let Handlebars = require("handlebars");
-let $ = require("jquery");
+const Handlebars = require("handlebars");
+const $ = require("jquery");
+
+const gallery = Gallery();
 
 module.exports = function Showroom(items = [], options) {
 
@@ -25,8 +28,6 @@ module.exports = function Showroom(items = [], options) {
 
   setOffset(options.offset);
 
-  let reveal = {};
-
   let template = Handlebars.compile(options.template || `
     <div class="{{showroom.options.cssClass}}">
       <header class="ftw-showroom-header">
@@ -42,7 +43,7 @@ module.exports = function Showroom(items = [], options) {
         </div>
         <span class="ftw-showroom-title">{{item.title}}</span>
         <div class="ftw-showroom-right">
-          <a id="ftw-showroom-close" class="ftw-showroom-button"></a>
+          <a class="ftw-showroom-button ftw-showroom-close"></a>
         </div>
       </header>
       <div class="ftw-showroom-content">
@@ -68,7 +69,7 @@ module.exports = function Showroom(items = [], options) {
 
   let register = Register(items, { tail: options.tail, head: options.head });
   let target = $(options.target);
-  let observer = Observer();
+  const showroomObserver = Observer("");
 
   let throttledNext = throttle(next, 1000, { trailing: false });
 
@@ -77,8 +78,8 @@ module.exports = function Showroom(items = [], options) {
   let isOpen = false;
 
   function checkArrows() {
-    let nextButton = $("#ftw-showroom-next", element);
-    let prevButton = $("#ftw-showroom-prev", element);
+    let nextButton = $(".ftw-showroom-next", element);
+    let prevButton = $(".ftw-showroom-prev", element);
 
     current() < options.total ? nextButton.show() : nextButton.hide();
     register.hasPrev() ? prevButton.show() : prevButton.hide();
@@ -97,7 +98,6 @@ module.exports = function Showroom(items = [], options) {
       element.remove();
       element = newElement || $();
       element.show();
-      isOpen = true;
       target.append(element).addClass("ftw-showroom-open");
       checkArrows();
     });
@@ -108,13 +108,15 @@ module.exports = function Showroom(items = [], options) {
     let item = register.items.filter(
       item => item.id === (event.currentTarget.getAttribute("data-showroom-id") || event.currentTarget.getAttribute("data-showroom-target-item"))
     )[0];
-    open(item);
+    if(item) {
+      open(item);
+    }
   }
 
   function close() {
     target.removeClass("ftw-showroom-open");
     element.hide();
-    observer.reset();
+    showroomObserver.reset();
     isOpen = false;
   }
 
@@ -124,8 +126,10 @@ module.exports = function Showroom(items = [], options) {
     }
     item = item || register.items[0];
     register.set(item);
-    observer.update(item);
-    if(observer.hasChanged()) {
+    showroomObserver.update(item.id);
+    if(showroomObserver.hasChanged()) {
+      isOpen = true;
+      gallery.closeOthers(reveal);
       return showItem(item);
     }
   }
@@ -178,6 +182,8 @@ module.exports = function Showroom(items = [], options) {
     element = $();
     target.removeClass("ftw-showroom-open");
     register.items.forEach(item => item.destroy());
+    gallery.unregister(reveal);
+    isOpen = false;
   }
 
   function setOffset(value) {
@@ -190,7 +196,7 @@ module.exports = function Showroom(items = [], options) {
     }
     options.total = value;
     if(isOpen) {
-      observer.reset();
+      showroomObserver.reset();
       return open(register.current);
     }
   }
@@ -199,8 +205,8 @@ module.exports = function Showroom(items = [], options) {
     return register.pointer + 1 + options.offset;
   }
 
-  $(document)
-    .on("click", "#ftw-showroom-close", close)
+  $(document.documentElement)
+    .on("click", ".ftw-showroom-close", close)
     .on("keydown", (e) => {
       event.isEscape(e, close);
       event.isArrowRight(e, throttledNext);
@@ -208,24 +214,29 @@ module.exports = function Showroom(items = [], options) {
     })
     .on("click", ".showroom-item", select)
     .on("click", ".showroom-reference", select)
-    .on("click", "#ftw-showroom-prev", throttledPrev)
-    .on("click", "#ftw-showroom-next", throttledNext);
+    .on("click", ".ftw-showroom-prev", throttledPrev)
+    .on("click", ".ftw-showroom-next", throttledNext);
 
-  reveal.open = open;
-  reveal.close = close;
-  reveal.next = next;
-  reveal.prev = prev;
-  reveal.append = append;
-  reveal.prepend = prepend;
-  reveal.reset = reset;
-  reveal.destroy = destroy;
-  reveal.setTotal = setTotal;
-  reveal.setOffset = setOffset;
+  let reveal = {
+    open,
+    close,
+    next,
+    prev,
+    append,
+    prepend,
+    reset,
+    destroy,
+    setTotal,
+    setOffset
+  }
 
   Object.defineProperty(reveal, "options", { get: () => { return options; }});
   Object.defineProperty(reveal, "current", { get: () => { return current(); }});
   Object.defineProperty(reveal, "items", { get: () => { return register.items; }});
   Object.defineProperty(reveal, "element", { get: () => { return element; }});
+  Object.defineProperty(reveal, "isOpen", { get: () => { return isOpen; } });
+
+  gallery.register(reveal);
 
   return Object.freeze(reveal);
 
