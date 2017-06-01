@@ -223,25 +223,27 @@ Configuration
 
 The showrooms provide the following options.
 
-+----------+--------------------------+--------------------------------------------------------------------------+
-| Option   | Default                  | Description                                                              |
-+==========+==========================+==========================================================================+
-| cssClass | "ftw-showroom"           | Class attribute on the root element of the gallery                       |
-+----------+--------------------------+--------------------------------------------------------------------------+
-| render   | See rendering_. section  | Override the default render behavior                                     |
-+----------+--------------------------+--------------------------------------------------------------------------+
-| tail     | Empty function           | Called when the user reaches the last element of the gallery             |
-+----------+--------------------------+--------------------------------------------------------------------------+
-| head     | Empty function           | Is getting called when the user reaches the first element of the gallery |
-+----------+--------------------------+--------------------------------------------------------------------------+
-| fetch    | See fetching_. section   | Override the default fetch behavior                                      |
-+----------+--------------------------+--------------------------------------------------------------------------+
-| template | See template section     | Override the default gallery template                                    |
-+----------+--------------------------+--------------------------------------------------------------------------+
-| target   | body Element             | Define a selector where the gallery will be attached                     |
-+----------+--------------------------+--------------------------------------------------------------------------+
-| offset   | 0                        | Offset for the current item counter, useful for batches                  |
-+----------+--------------------------+--------------------------------------------------------------------------+
++---------------+--------------------------+--------------------------------------------------------------------------+
+| Option        | Default                  | Description                                                              |
++===============+==========================+==========================================================================+
+| cssClass      | "ftw-showroom"           | Class attribute on the root element of the gallery                       |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| render        | See rendering_. section  | Override the default render behavior                                     |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| tail          | Empty function           | Called when the user reaches the last element of the gallery             |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| head          | Empty function           | Is getting called when the user reaches the first element of the gallery |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| fetch         | See fetching_. section   | Override the default fetch behavior                                      |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| beforeRender  | noop                     | Hook to augment the item for example                                     |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| template      | See template section     | Override the default gallery template                                    |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| target        | body Element             | Define a selector where the gallery will be attached                     |
++---------------+--------------------------+--------------------------------------------------------------------------+
+| offset        | 0                        | Offset for the current item counter, useful for batches                  |
++---------------+--------------------------+--------------------------------------------------------------------------+
 
 .. _fetching:
 
@@ -260,7 +262,7 @@ This function can be overridden, see Configuration_.
 
   let showroom = Showroom(items,
     {
-      fetch: () => { return "<p>Some other content</p>"; }
+      fetch: (item) => { return "<p>Some other content</p>"; }
     }
   );
 
@@ -287,7 +289,7 @@ This function can be overridden, see Configuration_.
 
   let showroom = Showroom(items,
     {
-      fetch: () => { return "<p>Some other content</p>"; }
+      render: (content) => { return $(template()); }
     }
   );
 

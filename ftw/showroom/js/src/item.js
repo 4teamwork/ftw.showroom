@@ -9,12 +9,12 @@ export default function Item(element) {
 
   function destroy() { element.removeAttribute("data-showroom-id"); }
 
-  return Object.freeze({
+  return {
     id: showroomId,
     element,
     target: element.getAttribute("data-showroom-target") || "",
     title: element.getAttribute("data-showroom-title") || "",
     destroy
-  });
+  };
 
 }

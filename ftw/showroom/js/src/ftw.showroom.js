@@ -17,6 +17,7 @@ module.exports = function Showroom(items = [], options) {
     render,
     tail: noop,
     head: noop,
+    beforeRender,
     fetch,
     template,
     target: "body",
@@ -94,14 +95,22 @@ module.exports = function Showroom(items = [], options) {
   }
 
   function showItem(item) {
-    return $.when(options.fetch(item)).pipe(options.render).pipe((newElement) => {
-      element.remove();
-      element = newElement || $();
-      element.show();
-      target.append(element).addClass("ftw-showroom-open");
-      checkArrows();
+    return $.when(options.fetch(item))
+      .pipe((content) => {
+        options.beforeRender(item, content);
+        return content;
+      })
+      .pipe(options.render)
+      .pipe((newElement) => {
+        element.remove();
+        element = newElement || $();
+        element.show();
+        target.append(element).addClass("ftw-showroom-open");
+        checkArrows();
     });
   };
+
+  function beforeRender(item, content) {  }
 
   function select(event) {
     event.preventDefault();

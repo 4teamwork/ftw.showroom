@@ -1,10 +1,11 @@
 import Showroom from "ftw.showroom";
+const $ = require("jquery");
 
-export function defaultShowroom() {
+export function defaultShowroom(options) {
   fixture.load("default_outlet.html", "default_list.html");
   let defaultItems = fixture.el.querySelectorAll(".showroom-item");
 
-  return Showroom(defaultItems, {
+  return Showroom(defaultItems, $.extend({
     fetch: () => {
       return `
         <div id='content'>content</div>
@@ -14,7 +15,7 @@ export function defaultShowroom() {
     },
     target: "#outlet",
     total: 10
-  });
+  }, options));
 }
 
 export function singleShowroom() {
