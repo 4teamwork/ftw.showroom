@@ -5,7 +5,8 @@ import * as event from "event";
 
 require('babelify-es6-polyfill');
 
-let $ = require("jquery");
+const $ = require("jquery");
+const HBS = require("handlebars");
 
 let defaultItems;
 
@@ -93,6 +94,17 @@ describe("Showroom", () => {
       assert.equal(showroom.options.cssClass, "ftw-showroom");
       assert.equal(showroom.options.total, 0);
       assert.equal(showroom.options.offset, 0);
+    });
+
+    it("should be possible to augment the item before rendering", () => {
+      showroom = Builder.defaultShowroom({
+        beforeRender: function(item) { item.key = "test"; },
+        template: "<div id={{item.key}}>test</div>"
+      });
+
+      showroom.open();
+
+      assert.equal(fixture.el.querySelector("#test").textContent, "test");
     });
 
     it("displayOptions", () => {
