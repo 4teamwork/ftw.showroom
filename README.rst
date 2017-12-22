@@ -42,7 +42,7 @@ Install the Generic Setup profile.
 Compatibility
 -------------
 
-Plone 4.3
+Plone 4.3 and 5.1
 
 .. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Plone-logo.svg/2000px-Plone-logo.svg.png
    :target: https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Plone-logo.svg/2000px-Plone-logo.svg.png
