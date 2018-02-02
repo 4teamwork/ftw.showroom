@@ -245,6 +245,28 @@ The showrooms provide the following options.
 | offset        | 0                        | Offset for the current item counter, useful for batches                  |
 +---------------+--------------------------+--------------------------------------------------------------------------+
 
+.. _events:
+
+Events
+------
+
+ftw.showroom fires the following events on `document`:
+
++---------------------+----------+-----------------------------------------------------------------------------------------------------------+
+| Event               | Params   | Description                                                                                               |
++=====================+==========+===========================================================================================================+
+| showroom:item:shown | showroom | Invoked every time an item is shown, so if showroom opens, every time the selected showroom item changes. |
++---------------------+----------+-----------------------------------------------------------------------------------------------------------+
+
+To listen to an event use the following code:
+
+.. code:: javascript
+
+  $(document).on('showroom:item:shown', function (showroom) {
+    // do something with the showroom/item
+  })
+
+
 .. _fetching:
 
 Fetching
@@ -470,4 +492,3 @@ Refreshes the showroom references.
 .. code:: javascript
 
   showroom.refresh();
-
