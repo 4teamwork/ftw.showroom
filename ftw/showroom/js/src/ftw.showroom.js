@@ -107,7 +107,9 @@ module.exports = function Showroom(items = [], options) {
         element.show();
         target.append(element).addClass("ftw-showroom-open");
         checkArrows();
-    });
+      }).pipe(() => {
+	$(document).trigger("showroom:item:shown", [reveal]);
+      });
   };
 
   function beforeRender(item, content) {  }
