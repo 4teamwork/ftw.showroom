@@ -3,7 +3,7 @@ from setuptools import setup
 
 import os
 
-version = '1.4.1.dev0'
+version = '1.5.0'
 maintainer = 'Kevin Bieri'
 
 tests_require = [
