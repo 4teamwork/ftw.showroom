@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.1 (unreleased)
+1.5.1 (2018-03-12)
 ------------------
 
 - 1.5.0 Did not work properly, since the dist command was not executed. [mathias.leimgruber]
