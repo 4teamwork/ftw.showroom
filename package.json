@@ -25,7 +25,7 @@
     "karma-babel-preprocessor": "6.0.1",
     "karma-html2js-preprocessor": "1.1.0",
     "babelify-es6-polyfill": "1.0.4",
-    "jquery": "2.1.0",
+    "jquery": "3.4.1",
     "browserify-shim": "3.8.12",
     "underscore": "1.8.3",
     "handlebars": "4.0.5"
