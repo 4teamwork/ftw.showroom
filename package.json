@@ -28,7 +28,7 @@
     "jquery": "2.1.0",
     "browserify-shim": "3.8.12",
     "underscore": "1.8.3",
-    "handlebars": "4.0.5"
+    "handlebars": "4.7.6"
   },
   "browserify-shim": {
     "jquery": { "exports": "global:jQuery" },
